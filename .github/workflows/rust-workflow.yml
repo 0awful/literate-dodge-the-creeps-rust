@@ -24,7 +24,7 @@ jobs:
     - name: format
       uses: mbrobbel/rustfmt-check@master
       with:
-        components: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}
     - name: build
       run: cargo build --verbose
     - name: test
