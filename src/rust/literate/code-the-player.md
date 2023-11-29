@@ -66,7 +66,7 @@ We need to do a couple things for the player to do what we'd like. We need to se
         <<get sprite node>>
         if velocity.length() > 0.0 {
             velocity = velocity.normalized() * self.speed;
-      
+
             <<animate sprite node>>
         } else {
             <<handle stopping the animation>>
@@ -183,11 +183,11 @@ We will have this rough structure.
 fn on_player_body_entered(&mut self, _body: Gd<PhysicsBody2D>) {
     self.base.hide();
     self.base.emit_signal("hit".into(), &[]);
-    
+ 
     let mut collision_shape = self
         .base
         .get_node_as::<CollisionShape2D>("CollisionShape2D");
-    
+
     collision_shape.set_deferred("disabled".into(), true.to_variant());
 }
 ```
@@ -260,12 +260,10 @@ let animation;
 
 if velocity.x != 0.0 {
     animation = "right";
-
     animated_sprite.set_flip_v(false);
     animated_sprite.set_flip_h(velocity.x < 0.0)
 } else {
     animation = "up";
-
     animated_sprite.set_flip_v(velocity.y > 0.0)
 }
 
