@@ -19,13 +19,12 @@ jobs:
     - name: checkout
       uses: actions/checkout@v3
     - name: get deps
-      uses: dtolnay/rust-toolchain@stable
+      uses: dtolnay/rust-toolchain@nightly
       with:
         components: rustfmt
     - name: rustfmt
       uses: LoliGothick/rustfmt-check@v0.4.1
       with:
-        toolchain: stable
         working-directory: ./src/rust
         token: ${{ secrets.GITHUB_TOKEN }}
     - name: build
