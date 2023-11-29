@@ -30,7 +30,7 @@ pub struct Player {
    screen_size: Vector2,
    
    #[base]
-   base: Base<Area2D>
+   base: Base<Area2D>,
 }
 ``` 
 
@@ -54,13 +54,13 @@ We need to do a couple things for the player to do what we'd like. We need to se
             velocity += Vector2::RIGHT;
         }
         if input.is_action_pressed("move_left".into()) {
-           velocity += Vector2::LEFT;
+            velocity += Vector2::LEFT;
         }
         if input.is_action_pressed("move_down".into()) {
-           velocity += Vector2::DOWN;
+            velocity += Vector2::DOWN;
         }
         if input.is_action_pressed("move_up".into()) {
-           velocity += Vector2::UP;
+            velocity += Vector2::UP;
         }
 
         <<get sprite node>>
@@ -85,7 +85,7 @@ let change = velocity * real::from_f64(delta);
 let position = self.base.get_global_position() + change;
 let position = Vector2::new(
     position.x.clamp(0.0, self.screen_size.x),
-    position.y.clamp(0.0, self.screen_size.y)
+    position.y.clamp(0.0, self.screen_size.y),
 );
 self.base.set_global_position(position)
 ```
@@ -180,11 +180,13 @@ We will have this rough structure.
 ###### player collision logic
 ```rust
 #[func]
-fn on_player_body_entered(&mut self, _body:Gd<PhysicsBody2D>) {
+fn on_player_body_entered(&mut self, _body: Gd<PhysicsBody2D>) {
     self.base.hide();
     self.base.emit_signal("hit".into(), &[]);
     
-    let mut collision_shape = self.base.get_node_as::<CollisionShape2D>("CollisionShape2D");
+    let mut collision_shape = self
+        .base
+        .get_node_as::<CollisionShape2D>("CollisionShape2D");
     
     collision_shape.set_deferred("disabled".into(), true.to_variant());
 }
@@ -243,7 +245,9 @@ Here I'll give you a little picture
 
 ###### get sprite node
 ```rust
-let mut animated_sprite = self.base.get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
+let mut animated_sprite = self
+    .base
+    .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
 ```
 
 This pattern is going to be central to `gdext` development. You will write a line like this one in every project. It'll probably be the first line you can write by memory. If you have autocomplete, code snippets, or the like, this would be a great candidate for something to set that up for.

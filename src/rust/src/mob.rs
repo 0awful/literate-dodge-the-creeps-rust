@@ -10,7 +10,7 @@ pub struct Mob {
     pub max_speed: real,
 
     #[base]
-    base: Base<RigidBody2D>
+    base: Base<RigidBody2D>,
 }
 
 #[godot_api]
@@ -32,7 +32,9 @@ impl IRigidBody2D for Mob {
     }
 
     fn ready(&mut self) {
-        let mut sprite = self.base.get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
+        let mut sprite = self
+            .base
+            .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
         
         let anim_names = sprite.get_sprite_frames().unwrap().get_animation_names();
         let anim_names = anim_names.to_vec();
