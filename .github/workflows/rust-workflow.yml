@@ -21,10 +21,10 @@ jobs:
     - uses: dtolnay/rust-toolchain@stable
       with:
         components: rustfmt
-    - name: format
-      uses: mbrobbel/rustfmt-check@master
-      working-directory: ./src/rust
+    - name: rustfmt-check
+      uses: LoliGothick/rustfmt-check@v0.4.1
       with:
+        working-directory: ./src/rust
         token: ${{ secrets.GITHUB_TOKEN }}
     - name: build
       run: cargo build --verbose
