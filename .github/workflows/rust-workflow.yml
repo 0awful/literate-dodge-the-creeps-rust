@@ -23,6 +23,7 @@ jobs:
         components: rustfmt
     - name: format
       uses: mbrobbel/rustfmt-check@master
+      working-directory: ./src/rust
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
     - name: build
