@@ -10,6 +10,17 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  tangle:
+    runs-on: ubuntu-latest
+    name: Tangle
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+    - name: tangle
+      uses: ../jobs/tangle.yml
+      with:
+        working-directory: ./src/rust
+        volume: ./
   format:
     runs-on: ubuntu-latest
     needs: tangle
@@ -41,14 +52,3 @@ jobs:
       run: cargo build --verbose
     - name: test
       run: cargo test --verbose
-  tangle:
-    runs-on: ubuntu-latest
-    name: Tangle
-    steps:
-    - name: checkout
-      uses: actions/checkout@v3
-    - name: tangle
-      uses: ./jobs/tangle.yml
-      with:
-        working-directory: ./src/rust
-        volume: ./
