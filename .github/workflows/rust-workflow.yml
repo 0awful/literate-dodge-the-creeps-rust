@@ -26,7 +26,6 @@ jobs:
       uses: LoliGothick/rustfmt-check@v0.4.1
       with:
         toolchain: stable
-        options: --manifest-path=./src/rust/Cargo.toml
         working-directory: ./src/rust
         token: ${{ secrets.GITHUB_TOKEN }}
     - name: build
