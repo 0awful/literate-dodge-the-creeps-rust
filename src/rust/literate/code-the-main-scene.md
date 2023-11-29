@@ -1,0 +1,280 @@
+# Main
+
+This is where it all comes together. Up until now your experience has largely been that of using the editor and writing code. Now we get to play the game. You'll likely catch something you've forgotten here.
+
+Take a moment and try to do it without any guidance. But you will hit things you have not done.
+
+# Implementing
+## High level structure
+###### file:../src/main_scene.rs
+```rust
+<<imports>>
+
+<<struct>>
+
+<<struct impl>>
+
+<<class impl>>
+```
+## Imports
+###### imports
+```rust
+use godot::engine::{AudioStreamPlayer2D, Marker2D, PathFollow2D, RigidBody2D, Timer};
+use godot::prelude::*;
+use rand::prelude::*;
+use std::f32::consts::PI;
+
+use crate::hud::Hud;
+use crate::mob::Mob;
+use crate::player::Player;
+```
+We have a couple new things. We pull in the other file's structs so that we can use the types within. 
+
+## The Struct
+Here's where things are going to get different.
+
+In the official tutorial they call out a packed scene. We handle that here and in the ready. Lets dive in.
+
+###### struct
+```rust
+#[derive(GodotClass)]
+#[class(base=Node)]
+pub struct MainScene {
+    pub score: real,
+    pub mob_scene: Gd<PackedScene>,
+    #[base]
+    pub base: Base<Node>,
+}
+```
+
+Everything outside of the `PackedScene` is typical. However we do have a `Gd<T>`. TODO EXPLAIN
+
+## INode
+This is the next easiest part of this code. It has one new function and it's just like the `player` code in how we use it.
+###### class impl
+```rust
+#[godot_api]
+impl INode for MainScene {
+    fn init(base: Base<Node>) -> Self {
+        MainScene {
+            base,
+            score: 0.0,
+            mob_scene: PackedScene::new(),
+        }
+    }
+
+    fn ready(&mut self) {
+        self.mob_scene = load("res://mob.tscn");
+    }
+}
+```
+As you can see we instantiate the PackedScene as a new empty, like we did the with `Player.screen_size`. Then we assign a value to it with `load` in the `ready` call. This is once again because TODO EXPLAIN WHY.
+
+# The Main Event
+This is where things start to go in direction's you'll find challenging. Lets start with the easy parts.
+
+###### struct impl
+```rust
+#[godot_api]
+impl MainScene {
+  <<game over>>
+  
+  <<new game>>
+  
+  <<score timer timeout>>
+  
+  <<start timer timeout>>
+  
+  <<mob timer timeout>>
+}
+```
+
+The [GDScript Tutorial]() had you code timeout functions. They are very similar in rust land.
+## Easy Timeouts
+###### start timer timeout
+```rust
+#[func]
+pub fn on_start_timer_timeout(&mut self) {
+    let mut score_timer = self.base.get_node_as::<Timer>("ScoreTimer");
+    let mut mob_timer = self.base.get_node_as::<Timer>("MobTimer");
+    score_timer.start();
+    mob_timer.start();
+}
+```
+Look at that. This isn't hard.
+
+###### score timer timeout
+```rust
+#[func]
+pub fn on_score_timer_timeout(&mut self) {
+    self.score += 1.0;
+
+    let mut hud = self.base.get_node_as::<Hud>("HUD");
+    hud.bind_mut().update_score(self.score);
+}
+```
+The gotcha here is `bind_mut`. Its because the hud is another rust component. To gain access we use bind. Because we are performing a modifying call we have to `bind_mut()`
+
+# New Game
+This is a lot of things you chould be okay with doing. There's the same `bind_mut()` gotcha. But once you're past that its the same game
+###### new game
+```rust
+#[func]
+pub fn new_game(&mut self) {
+    self.score = 0.0;
+    let mut player = self.base.get_node_as::<Player>("Player");
+    let marker = self.base.get_node_as::<Marker2D>("StartPosition");
+    let mut player = player.bind_mut();
+    player.start(marker.get_global_position());
+
+    let mut start_timer = self.base.get_node_as::<Timer>("StartTimer");
+    start_timer.start();
+
+    let mut hud = self.base.get_node_as::<Hud>("HUD");
+    let mut hud = hud.bind_mut();
+    hud.update_score(self.score);
+    hud.show_message_text("Get Ready".into());
+
+    let mut music_player = self.base.get_node_as::<AudioStreamPlayer2D>("Music");
+    music_player.play();
+}
+```
+
+We've got the music player calls, the hud calls, a show message call. But at the end of the day this is just `get_node_as` with a couple instances of `bind_mut()`
+
+Good job if you got this one. No worries if you didn't. `bind_mut` is a curve ball.
+
+# The Hard Timeout
+This is the hardest part. Of the entire application. Every line of code. This right here is the hardest. If you didn't get it no worries. If you did congrats.
+
+###### mob timer timeout
+```
+#[func]
+pub fn on_mob_timer_timeout(&mut self) {
+    <<instantiate as>>
+    
+    <<pick location>>
+    
+    <<set rotation>>
+    
+    <<add child>>
+    
+    <<make the mob go>>
+}
+```
+
+Lets talk about why its hard before we get into it.
+
+We have a somewhat solvable problem of picking the location on the path. That's something you could pretty easily get. At the same time. Its using ranges and RNG as well as setting progress. 
+###### pick location
+```rust
+let mut mob_spawn_location = self
+    .base
+    .get_node_as::<PathFollow2D>("MobPath/MobSpawnLocation");
+
+let mut rng = rand::thread_rng();
+let progress = rng.gen_range(u32::MIN..u32::MAX);
+
+mob_spawn_location.set_progress(progress as f32);
+mob_scene.set_position(mob_spawn_location.get_position());
+```
+
+But you may not have even hit this problem because
+
+###### instantiate as
+```rust
+let mut mob_scene = self.mob_scene.instantiate_as::<RigidBody2D>();
+```
+
+To even see this part of the problem you need to crack `instantiate_as`. You've never used it before. Its the only time we use it in this project. We use this because TODO Explain WHY
+
+###### set rotation
+And then you have the hardest math problem in the project. If you aren't up on your geometry, well, you aren't going to solve it. I view myself as a mathy kind of person. I couldn't do this. If you know you know. If you don't that's what tutorials are for. To be fair. You could've stolen this from the [GDScript Tutorial]()
+```
+let mut direction = mob_spawn_location.get_rotation() + PI / 2.0;
+direction += rng.gen_range(-PI / 4.0..PI / 4.0);
+
+mob_scene.set_rotation(direction);
+```
+
+Making it go is a little easier, but has a weird wrinkle
+###### make the mob go
+```rust
+mob.set_linear_velocity(Vector2::new(range, 0.0));
+let lin_vel = mob.get_linear_velocity().rotated(real::from_f32(direction));
+mob.set_linear_velocity(lin_vel);
+```
+
+So you set the linear velocity twice. Why do you do this? TODO EXPLAIN WHY
+
+And to cap it all off you have to add a child programatically. Which is the first and only time you do it in this project. And its also kind of weird because of scopes
+
+###### add child
+```rust
+self.base.add_child(mob_scene.clone().upcast());
+
+let mut mob = mob_scene.cast::<Mob>();
+let range = {
+    // Local scope bind. Explain the rust
+    let mob = mob.bind();
+    rng.gen_range(mob.min_speed..mob.max_speed)
+};
+```
+
+TODO: Why we do this?
+
+If you struggled to get this. Of course you did. I don't believe anyone doing this as their first time could have arrived at this themselves. But now you know why and how to do it for the future. Lets wrap this up.
+
+# Game Over
+This is using something new, but if you referenced the docs, you might have been able to get it. Its very intuitive.
+###### game over
+```rust
+#[func]
+pub fn game_over(&mut self) {
+    let mut score_timer = self.base.get_node_as::<Timer>("ScoreTimer");
+    let mut mob_timer = self.base.get_node_as::<Timer>("MobTimer");
+    score_timer.stop();
+    mob_timer.stop();
+
+    self.base
+        .get_tree()
+        .unwrap()
+        .call_group("mobs".into(), "queue_free".into(), &[]);
+
+    let mut hud = self.base.get_node_as::<Hud>("HUD");
+    hud.bind_mut().show_game_over();
+
+    let mut music_player = self.base.get_node_as::<AudioStreamPlayer2D>("Music");
+    music_player.stop();
+    let mut death_sound = self.base.get_node_as::<AudioStreamPlayer2D>("DeathSound");
+    death_sound.play();
+}
+```
+You need to get the tree and then tell it to "queue_free". This requires you to get the `base` `get_tree` on the base. That returns an optional so `unwrap()` then `call_group` to free it. The only hard part is the `variant`. If you remember from the `emit` part of this project you can make an empty variant with `&[]`. We don't need to say anything other than `queue_free`. So `&[]` will get the job done. 
+
+You have a `bind_mut()` which you should be starting to get comfortable with. Everything else is just about what you expect.
+
+# Make it go
+
+At this point you've now crafted everything you need to make the game happen. Follow along with [GDScript]() for setting up the nodes. But outside of that you've completed it. If you have any questions join us in the [discord](). 
+
+If you notice any errors or anything is confusing, go to the [github]() and make a change to this code to correct it. If you don't know how have the discord help you along. We'd love the help and welcome you to the the wonderful world of godot rust. 
+
+###### file:../src/lib.rs
+```rust
+use godot::prelude::*;
+
+pub mod hud;
+pub mod main_scene;
+pub mod mob;
+pub mod player;
+
+struct DodgeTheCreeps;
+
+#[gdextension]
+unsafe impl ExtensionLibrary for DodgeTheCreeps {}
+```
+Ps. This is what lib.rs should look like
+
+
+[previous]()
