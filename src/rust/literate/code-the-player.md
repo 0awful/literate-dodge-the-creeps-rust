@@ -26,11 +26,11 @@ Lets start with making a `player.rs` file at `/rust/src/player.rs` in the future
 #[derive(GodotClass)]
 #[class(base=Area2D)]
 pub struct Player {
-   speed: real,
-   screen_size: Vector2,
+    speed: real,
+    screen_size: Vector2,
    
-   #[base]
-   base: Base<Area2D>,
+    #[base]
+    base: Base<Area2D>,
 }
 ``` 
 
@@ -185,8 +185,8 @@ fn on_player_body_entered(&mut self, _body: Gd<PhysicsBody2D>) {
     self.base.emit_signal("hit".into(), &[]);
  
     let mut collision_shape = self
-        .base
-        .get_node_as::<CollisionShape2D>("CollisionShape2D");
+         .base
+         .get_node_as::<CollisionShape2D>("CollisionShape2D");
 
     collision_shape.set_deferred("disabled".into(), true.to_variant());
 }

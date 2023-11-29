@@ -56,7 +56,7 @@ impl Hud {
 
 #[godot_api]
 impl ICanvasLayer for Hud {
-  fn init(base: Base<Self::Base>) -> Self {
-      Self { base }
-  }
+    fn init(base: Base<Self::Base>) -> Self {
+        Self { base }
+    }
 }
