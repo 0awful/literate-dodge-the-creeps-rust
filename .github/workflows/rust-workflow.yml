@@ -18,12 +18,14 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v3
-    - uses: dtolnay/rust-toolchain@stable
+    - name: get deps
+      uses: dtolnay/rust-toolchain@stable
       with:
         components: rustfmt
-    - name: rustfmt-check
+    - name: rustfmt
       uses: LoliGothick/rustfmt-check@v0.4.1
       with:
+        options: --manifest-path=./src/rust/Cargo.toml
         working-directory: ./src/rust
         token: ${{ secrets.GITHUB_TOKEN }}
     - name: build
