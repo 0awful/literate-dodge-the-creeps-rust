@@ -13,11 +13,11 @@ I didn't do the godot side of it. Mainly because I have this code doing the godo
 
 # Building Locally
 ```
-cd src/rust
-docker run --interactive --tty --rm --volume $(pwd):/workdir mqsoh/knot ./literate/*
-cargo build
+./tangle.sh
 ```
 Requires docker.
+
+Then `cargo build` to build the rust code
 
 # CI
 I'll set up CI soon. Mostly to show it can be done. Then set up automated deployments to somewhere. Pages probably. Its easy to build. Github actions are free for public repos. It'll be an easy setup.
