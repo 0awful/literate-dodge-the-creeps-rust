@@ -4,8 +4,7 @@ This is where it all comes together. Up until now your experience has largely be
 
 Take a moment and try to do it without any guidance. But you will hit things you have not done. Here is the [GDScript Ref](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/05.the_main_game_scene.html)
 
-# Moral Support Cat
-![cat]()
+![cat](https://images.pexels.com/photos/2835623/pexels-photo-2835623.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1)
 
 # Implementing
 ## High level structure

@@ -46,34 +46,34 @@ We need to do a couple things for the player to do what we'd like. We need to se
 
 ###### player process
 ```rust
-    fn process(&mut self, delta: f64) {
-        let mut velocity = Vector2::new(0.0, 0.0);
-    
-        let input = Input::singleton();
-        if input.is_action_pressed("move_right".into()) {
-            velocity += Vector2::RIGHT;
-        }
-        if input.is_action_pressed("move_left".into()) {
-            velocity += Vector2::LEFT;
-        }
-        if input.is_action_pressed("move_down".into()) {
-            velocity += Vector2::DOWN;
-        }
-        if input.is_action_pressed("move_up".into()) {
-            velocity += Vector2::UP;
-        }
+fn process(&mut self, delta: f64) {
+    let mut velocity = Vector2::new(0.0, 0.0);
 
-        <<get sprite node>>
-        if velocity.length() > 0.0 {
-            velocity = velocity.normalized() * self.speed;
-
-            <<animate sprite node>>
-        } else {
-            <<handle stopping the animation>>
-        }
-
-        <<move the player>>
+    let input = Input::singleton();
+    if input.is_action_pressed("move_right".into()) {
+        velocity += Vector2::RIGHT;
     }
+    if input.is_action_pressed("move_left".into()) {
+        velocity += Vector2::LEFT;
+    }
+    if input.is_action_pressed("move_down".into()) {
+        velocity += Vector2::DOWN;
+    }
+    if input.is_action_pressed("move_up".into()) {
+        velocity += Vector2::UP;
+    }
+
+    <<get sprite node>>
+    if velocity.length() > 0.0 {
+        velocity = velocity.normalized() * self.speed;
+
+    <<animate sprite node>>
+    } else {
+        <<handle stopping the animation>>
+    }
+
+    <<move the player>>
+}
 ```
 
 This means we also need to set up these actions within our godot editor. This is done identically to the godot example so reference the official dodge the creeps example for setting that up. The same will be true of animations and setting up the collision shape. But we need to do a little more before we can set that up.
@@ -121,11 +121,11 @@ The `move the player` code goes in `IArea2D` `impl` which handles the `init` `re
 ```rust
 #[godot_api]
 impl IArea2D for Player {
-<<player init>>
+    <<player init>>
 
-<<player ready>>
+    <<player ready>>
 
-<<player process>>
+    <<player process>>
 }
 ```
 
@@ -135,13 +135,13 @@ We just wrote the `player process code` leaving a few placeholder's we'll fill o
 
 ###### player init
 ```rust
-    fn init(base: Base<Area2D>) -> Self {
-        Player {
-            speed: 400.0,
-            screen_size: Vector2::new(0.0, 0.0),
-            base,
-        }
+fn init(base: Base<Area2D>) -> Self {
+    Player {
+        speed: 400.0,
+        screen_size: Vector2::new(0.0, 0.0),
+        base,
     }
+}
 ```
 
 Because we use base in the `Player` `struct` we need to have base as a parameter in our `init`. This is then handled automagically by `gdext`. 
@@ -150,11 +150,11 @@ But also what the heck. `screen_size` isn't `(0.0, 0.0)`. We handle this in `rea
 
 ###### player ready
 ```rust
-    fn ready(&mut self) {
-        let viewport = self.base.get_viewport_rect();
-        self.screen_size = viewport.size;
-        self.base.hide();
-    }
+fn ready(&mut self) {
+    let viewport = self.base.get_viewport_rect();
+    self.screen_size = viewport.size;
+    self.base.hide();
+}
 ```
 
 Here we set the screen size and hide the player. We do this because we don't want them visible when we are on the main menu. 
@@ -240,7 +240,7 @@ I invite you right now to try to implementing `get the sprite node`. You know al
 
 Here I'll give you a little picture
 
-![](https://images.pexels.com/photos/45201/kitty-cat-kitten-pet-45201.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1)
+![cat](https://images.pexels.com/photos/45201/kitty-cat-kitten-pet-45201.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1)
 
 
 ###### get sprite node
@@ -278,7 +278,7 @@ Once again you now know all you'd need to know to stop the animation. Take a sta
 
 Here's another photo.
 
-![](https://images.pexels.com/photos/45201/kitty-cat-kitten-pet-45201.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1)
+![cat](https://images.pexels.com/photos/416160/pexels-photo-416160.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1)
 
 ###### handle stopping the animation
 ```rust
