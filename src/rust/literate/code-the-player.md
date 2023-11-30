@@ -295,7 +295,7 @@ use godot::prelude::*;
 ```
 
 
-With this you have now implemented all the rust code for the player sprite. You can find the combined code at the [player node example code](). Lets now tackle setting it up in the editor.
+With this you have now implemented all the rust code for the player sprite. You can find the combined code at the [player node example code](https://github.com/0awful/literate-dodge-the-creeps-rust/blob/main/src/rust/src/player.rs). Lets now tackle setting it up in the editor.
 
 # The Final Step
 The last step is an addition to your `lib.rs`. Using standard rust semantics you expose the module.
@@ -314,4 +314,4 @@ unsafe impl ExtensionLibrary for MyExtension {}
 
 You will do this for all code you wish to use in godot.
 
-[Next Page]().
+[combined code](https://github.com/0awful/literate-dodge-the-creeps-rust/blob/main/src/rust/src/player.rs) [Next Page](https://0awful.github.io/literate-dodge-the-creeps-rust/using-player-in-the-editor).

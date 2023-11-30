@@ -1,3 +1,5 @@
+# View The Tutorial [Here](https://0awful.github.io/literate-dodge-the-creeps-rust/)
+
 # Dodge the creeps Rust
 This project is going to look atypical if you look in some places and very typical if you look in others. This is the dodge the creeps example built using gdext, referencing and building upon gdext's example, and with direct reference to godot's dodge the creeps tutorial. This aims to be the second tutorial that you see in your process of learning gdext. You should know how to set up a project and the absolute basics of gdext. Additionally it will not redescribe the details of how godot works. You can find many other examples that would do that better than this document ever could. 
 
