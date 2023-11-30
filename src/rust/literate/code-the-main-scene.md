@@ -77,15 +77,15 @@ This is where things start to go in direction's you'll find challenging. Lets st
 ```rust
 #[godot_api]
 impl MainScene {
-  <<game over>>
-  
-  <<new game>>
-  
-  <<score timer timeout>>
-  
-  <<start timer timeout>>
-  
-  <<mob timer timeout>>
+    <<game over>>
+
+    <<new game>>
+
+    <<score timer timeout>>
+
+    <<start timer timeout>>
+
+    <<mob timer timeout>>
 }
 ```
 

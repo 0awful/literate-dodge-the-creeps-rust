@@ -19,7 +19,7 @@ The hud is much of what you've already encountered however it has a greater emph
 ```rust
 #[godot_api]
 impl ICanvasLayer for Hud {
-  <<init>>
+    <<init>>
 }
 ```
 

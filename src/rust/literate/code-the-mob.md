@@ -64,7 +64,7 @@ pub struct Mob {
     pub max_speed: real,
 
     #[base]
-    base: Base<RigidBody2D>
+    base: Base<RigidBody2D>,
 }
 ```
 
@@ -88,7 +88,9 @@ You've got some magic numbers you could pull out as consts if you'd like.
 ###### ready
 ```rust
 fn ready(&mut self) {
-    let mut sprite = self.base.get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
+    let mut sprite = self
+        .base
+        .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
     
     let anim_names = sprite.get_sprite_frames().unwrap().get_animation_names();
     let anim_names = anim_names.to_vec();
