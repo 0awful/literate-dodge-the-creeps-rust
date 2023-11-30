@@ -16,6 +16,9 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+        repository: ${{ github.event.pull_request.head.repo.full_name }}
     - name: docker-run
       uses: addnab/docker-run-action@v3
       with:
@@ -25,8 +28,6 @@ jobs:
     - name: Commit Changes
       uses: EndBug/add-and-commit@v9
       with:
-        repository: ${{ github.event.pull_request.head.repo.full_name }}
-        ref: $GITHUB_HEAD_REF
         message: "update rust/src from markdown files"
         default_author: github_actions
   format:
