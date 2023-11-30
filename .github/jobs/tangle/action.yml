@@ -9,6 +9,9 @@ inputs:
     description: The subdirectory you want this to run in
     required: false
     default: *
+outputs:
+  time:
+    description: This is a temporary value to confirm if it is required
 runs:
   using: docker
   image: mqsoh/knot
