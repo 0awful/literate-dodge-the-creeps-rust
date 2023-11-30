@@ -19,7 +19,7 @@ jobs:
     - name: docker-run
       uses: addnab/docker-run-action@v3
       with:
-        image:
+        image: mqsoh/knot:latest
         options: --interactive --tty --rm -v ./:/workdir mqsoh/knot
         run: "./src/rust/literate/*"
   format:
