@@ -43,7 +43,7 @@ Please give it a go and come back. Here is a cat for moral support
 
 ![]()
 
-If you'd like to work through pure code the code example is [here](), but you'll probably learn more by trying and failing once first. I will also walk you through this file.
+If you'd like to work through pure code the code example is [here](https://github.com/0awful/literate-dodge-the-creeps-rust/blob/main/src/rust/src/mob.rs), but you'll probably learn more by trying and failing once first. I will also walk you through this file.
 
 # Implementation
 Lets start with the simple. Did you remember the API macro?
@@ -68,7 +68,7 @@ pub struct Mob {
 }
 ```
 
-We set min and max speed like in the [GDScript Tutorial]()
+We set min and max speed like in the [GDScript Tutorial](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/05.the_main_game_scene.html#spawning-mobs). They do this in the main scene, but we have to define it will be something we set now. 
 
 Next we move on to the init of the impl. Its not much different from the `player`.
 
@@ -103,11 +103,11 @@ fn ready(&mut self) {
 }
 ```
 
-Here you use the mysterious 'special import' great work if you got it. Rust has a `rand` crate everyone uses and the default language doesn't have any randoms. This means we have an update to the cargo.toml. I'll share that later if you're following along.
+Here you use the mysterious 'special import' great work if you got it. Rust has a [`rand` crate](https://docs.rs/rand/latest/rand/) everyone uses and the language doesn't have any randoms. This means we have an update to the cargo.toml. I'll share that later if you're following along.
 
 ###### a special import
 ```rust
-use rand::seq::SliceRandom;
+use rand::prelude::*;
 ```
 
 and for good measure here's the normal imports
@@ -135,7 +135,7 @@ You use base because you're acting on the godot node and not your struct.
 mod mob;
 ```
 
-Then you go through the standard process of adding this item to godot. Follow the [GDScript Tutorial](). Nothing is different for this section.
+Then you go through the standard process of adding this item to godot. Follow the [GDScript Tutorial for Mobs](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/04.creating_the_enemy.html#). Nothing is different for this section.
 
 # Cargo.toml
 If you're looking for it. Here it is.
@@ -155,5 +155,6 @@ godot = { git = "https://github.com/godot-rust/gdext", branch = "master" }
 rand = "0.8.5"
 ```
 
-[Previous]()
-[Next]()
+[Previous Page](https://0awful.github.io/literate-dodge-the-creeps-rust/using-player-in-the-editor)
+[Full Mob Code](https://github.com/0awful/literate-dodge-the-creeps-rust/blob/main/src/rust/src/mob.rs)
+[Next Page](https://0awful.github.io/literate-dodge-the-creeps-rust/code-the-hud)

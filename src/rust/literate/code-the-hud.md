@@ -1,8 +1,8 @@
 # The Hud
 
-We take a brief divergence from the [GDScript Tutorial]() here. It won't make it harder to complete.
+We take a brief divergence from the GDScript tutorial to [Set up the hud](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html#contents) before the Main Scene. We do this because we want to use this in the Main Scene. Its easier to have it made before you need to use it.
 
-The hud is much of what you've already encountered however it has a greater emphasis on the `impl`. Our hud will expose functions for our main scene to use. We do that by having public functions on our struct. That being said the shape of the file is very much the same. Give it a go.
+The hud is much of what you've already encountered however it has a greater emphasis on the `impl`. Our hud will expose functions for our main scene to use. We do that by having public functions on our struct. That being said the shape of the file is very much the same. Give it a go. Here's the [GDScript Ref](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html#contents)
 
 ###### file:../src/hud.rs
 ```
@@ -90,7 +90,7 @@ fn on_message_timer_timeout(&mut self) {
     message_label.hide();
 }
 ```
-Just a get node as. You did need to know that many nodes have a `.hide()` but this is largely the same as [GDScript]()
+Just a get node as. You did need to know that many nodes have a `.hide()` but this is largely the same as [GDScript](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/06.heads_up_display.html)
 
 ###### on start button pressed
 ```rust
@@ -101,7 +101,7 @@ fn on_start_button_pressed(&mut self) {
     self.base.emit_signal("start_game".into(), &[]);
 }
 ```
-You've emitted a signal before in the player code. Did you remember the [Variant]()?
+You've emitted a signal before in the player code. Did you remember the [Variant](https://docs.godotengine.org/en/stable/classes/class_variant.html)? ([Rust Docs Ref](https://godot-rust.github.io/docs/gdext/master/godot/builtin/struct.Variant.html))
 
 ###### update score
 ```rust
@@ -142,8 +142,8 @@ pub fn show_game_over(&mut self) {
     button.show()
 }
 ```
-And the gotcha. We have a function that sets the label twice. Which means that if we rely on `show_message_text` we'll have bad behavior. We'll try to show one text and then immediately overwrite it with another. In the [GDScript Example]() this is solved with two timers. Here we TODO:
+And the gotcha. We have a function that sets the label twice. Which means that if we rely on `show_message_text` we'll have bad behavior. We'll try to show one text and then immediately overwrite it with another. In the [GDScript Example](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/06.heads_up_display.html#startbutton) this is solved with two timers. Here we TODO:
 
-With that we're done. Be sure to do the [GDScript Example's]() editor side of this. You should have all the tools you need to make it work.
+With that we're done. Be sure to do the [GDScript Example's](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/06.heads_up_display.html#) editor side of this. You should have all the tools you need to make it work.
 
-[previous]() [next]()
+[Previous Page](https://0awful.github.io/literate-dodge-the-creeps-rust/code-the-mob) [Full Hud Code](https://github.com/0awful/literate-dodge-the-creeps-rust/blob/main/src/rust/src/hud.rs) [Next Page](https://0awful.github.io/literate-dodge-the-creeps-rust/code-the-main-scene)

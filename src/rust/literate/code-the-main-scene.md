@@ -2,7 +2,10 @@
 
 This is where it all comes together. Up until now your experience has largely been that of using the editor and writing code. Now we get to play the game. You'll likely catch something you've forgotten here.
 
-Take a moment and try to do it without any guidance. But you will hit things you have not done.
+Take a moment and try to do it without any guidance. But you will hit things you have not done. Here is the [GDScript Ref](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/05.the_main_game_scene.html)
+
+# Moral Support Cat
+![cat]()
 
 # Implementing
 ## High level structure
@@ -89,7 +92,7 @@ impl MainScene {
 }
 ```
 
-The [GDScript Tutorial]() had you code timeout functions. They are very similar in rust land.
+The [GDScript Tutorial](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/05.the_main_game_scene.html#main-script) had you code timeout functions. They are very similar in rust land.
 ## Easy Timeouts
 ###### start timer timeout
 ```rust
@@ -189,7 +192,7 @@ let mut mob_scene = self.mob_scene.instantiate_as::<RigidBody2D>();
 To even see this part of the problem you need to crack `instantiate_as`. You've never used it before. Its the only time we use it in this project. We use this because TODO Explain WHY
 
 ###### set rotation
-And then you have the hardest math problem in the project. If you aren't up on your geometry, well, you aren't going to solve it. I view myself as a mathy kind of person. I couldn't do this. If you know you know. If you don't that's what tutorials are for. To be fair. You could've stolen this from the [GDScript Tutorial]()
+And then you have the hardest math problem in the project. If you aren't up on your geometry, well, you aren't going to solve it. I view myself as a mathy kind of person. I couldn't do this. If you know you know. If you don't that's what tutorials are for. To be fair. You could've stolen this from the [GDScript Tutorial](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/05.the_main_game_scene.html#main-script) but you would've needed to crack a few other tough parts to even get here.
 ```
 let mut direction = mob_spawn_location.get_rotation() + PI / 2.0;
 direction += rng.gen_range(-PI / 4.0..PI / 4.0);
@@ -256,9 +259,13 @@ You have a `bind_mut()` which you should be starting to get comfortable with. Ev
 
 # Make it go
 
-At this point you've now crafted everything you need to make the game happen. Follow along with [GDScript]() for setting up the nodes. But outside of that you've completed it. If you have any questions join us in the [discord](). 
+At this point you've now crafted everything you need to make the game happen. Follow along with [GDScript](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/05.the_main_game_scene.html#) for setting up the nodes. Don't forget the [Finishing Up Sections](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/07.finishing-up.html) But outside of that you've completed it. 
 
-If you notice any errors or anything is confusing, go to the [github]() and make a change to this code to correct it. If you don't know how have the discord help you along. We'd love the help and welcome you to the the wonderful world of godot rust. 
+# Next steps:
+
+Go check out the [Gdext Github](https://github.com/godot-rust/gdext). If you have any questions with Godot Rust (not this tutorial though :sweat_smile:) join us in the [discord](https://discord.com/invite/aKUCJ8rJsc).
+
+If you notice any errors in this tutorial or anything is confusing, go to the [tutorial github](https://github.com/0awful/literate-dodge-the-creeps-rust) and make a change to this code to correct it. I love the help. And welcome you to the the wonderful world of godot rust. 
 
 ###### file:../src/lib.rs
 ```rust
@@ -274,7 +281,7 @@ struct DodgeTheCreeps;
 #[gdextension]
 unsafe impl ExtensionLibrary for DodgeTheCreeps {}
 ```
-Ps. This is what lib.rs should look like
+Ps. This is what [lib.rs](https://github.com/0awful/literate-dodge-the-creeps-rust/blob/main/src/rust/src/lib.rs) should look like
 
 
-[previous]()
+[Previous Page](https://0awful.github.io/literate-dodge-the-creeps-rust/code-the-hud) [Full Main Scene Code](https://github.com/0awful/literate-dodge-the-creeps-rust/blob/main/src/rust/src/main_scene.rs) 
