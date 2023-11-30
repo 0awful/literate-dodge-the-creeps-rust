@@ -16,12 +16,12 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v3
-    - name: tangle
-      uses: ./.github/jobs/tangle
-      id: knot
+    - name: docker-run
+      uses: addnab/docker-run-action@v3
       with:
-        working-directory: ./src/rust
-        volume: ./
+        image:
+        options: --interactive --tty --rm -v ${{ github.workspace }}:/workdir mqsoh/knot
+        run: "./src/rust/literate/*"
   format:
     runs-on: ubuntu-latest
     needs: tangle
