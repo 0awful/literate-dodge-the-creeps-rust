@@ -20,7 +20,7 @@ jobs:
       uses: addnab/docker-run-action@v3
       with:
         image: mqsoh/knot:latest
-        options: --rm -v ./:/workdir mqsoh/knot
+        options: --rm -v ${{ github.workspace }}:/workdir mqsoh/knot
         run: "./src/rust/literate/*"
   format:
     runs-on: ubuntu-latest
