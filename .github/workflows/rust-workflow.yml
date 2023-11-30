@@ -17,7 +17,7 @@ jobs:
     - name: checkout
       uses: actions/checkout@v3
     - name: tangle
-      uses: ./.github/jobs/tangle.yml
+      uses: ./.github/jobs/tangle/action.yml
       with:
         working-directory: ./src/rust
         volume: ./

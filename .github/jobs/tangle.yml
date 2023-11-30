@@ -1,5 +1,0 @@
-name: tangle
-description: Tangle markdown with mqsoh/knot
-runs:
-  using: docker
-  image: mqsoh/knot

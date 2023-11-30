@@ -1,0 +1,16 @@
+name: tangle
+description: Tangle markdown with mqsoh/knot
+inputs:
+  volume:
+    description: Location of code
+    required: true
+    default: ./
+  working_directory:
+    description: The subdirectory you want this to run in
+    required: false
+    default: *
+runs:
+  using: docker
+  image: mqsoh/knot
+    - --volume {{inputs.volume}}
+    - {{inputs.working_directory}}
