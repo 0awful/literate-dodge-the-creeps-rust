@@ -15,5 +15,7 @@ runs:
   using: docker
   image: mqsoh/knot
   args:
-    - --volume ${{inputs.volume}}
+    - --tty
+    - --rm
+    - --volume ${{inputs.volume}}:/workdir
     - ${{inputs.working_directory}}
