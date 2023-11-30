@@ -314,4 +314,4 @@ unsafe impl ExtensionLibrary for MyExtension {}
 
 You will do this for all code you wish to use in godot.
 
-[combined code](https://github.com/0awful/literate-dodge-the-creeps-rust/blob/main/src/rust/src/player.rs) [Next Page](https://0awful.github.io/literate-dodge-the-creeps-rust/using-player-in-the-editor).
+[Full Player Code](https://github.com/0awful/literate-dodge-the-creeps-rust/blob/main/src/rust/src/player.rs) [Next Page](https://0awful.github.io/literate-dodge-the-creeps-rust/using-player-in-the-editor)
