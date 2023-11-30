@@ -43,7 +43,7 @@ impl Hud {
 
 Give it a shot. You can handle a lot of these already.
 
-![cat]()
+![cat](https://images.pexels.com/photos/1056251/pexels-photo-1056251.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1)
 
 # Implementation
 Lets go through the easy stuff real quick.

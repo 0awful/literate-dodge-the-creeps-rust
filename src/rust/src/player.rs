@@ -73,29 +73,29 @@ impl IArea2D for Player {
         if input.is_action_pressed("move_up".into()) {
             velocity += Vector2::UP;
         }
-
+    
         let mut animated_sprite = self
             .base
             .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
         if velocity.length() > 0.0 {
             velocity = velocity.normalized() * self.speed;
-
-            let animation;
-            
-            if velocity.x != 0.0 {
-                animation = "right";
-                animated_sprite.set_flip_v(false);
-                animated_sprite.set_flip_h(velocity.x < 0.0)
-            } else {
-                animation = "up";
-                animated_sprite.set_flip_v(velocity.y > 0.0)
-            }
-            
-            animated_sprite.play_ex().name(animation.into()).done();
+    
+        let animation;
+        
+        if velocity.x != 0.0 {
+            animation = "right";
+            animated_sprite.set_flip_v(false);
+            animated_sprite.set_flip_h(velocity.x < 0.0)
+        } else {
+            animation = "up";
+            animated_sprite.set_flip_v(velocity.y > 0.0)
+        }
+        
+        animated_sprite.play_ex().name(animation.into()).done();
         } else {
             animated_sprite.stop();
         }
-
+    
         let change = velocity * real::from_f64(delta);
         let position = self.base.get_global_position() + change;
         let position = Vector2::new(

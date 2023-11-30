@@ -41,7 +41,7 @@ impl IRigidBody2D for Mob {
 
 Please give it a go and come back. Here is a cat for moral support
 
-![]()
+![cat](https://images.pexels.com/photos/96938/pexels-photo-96938.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1)
 
 If you'd like to work through pure code the code example is [here](https://github.com/0awful/literate-dodge-the-creeps-rust/blob/main/src/rust/src/mob.rs), but you'll probably learn more by trying and failing once first. I will also walk you through this file.
 
