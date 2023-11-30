@@ -22,8 +22,8 @@ impl Player {
         self.base.emit_signal("hit".into(), &[]);
      
         let mut collision_shape = self
-             .base
-             .get_node_as::<CollisionShape2D>("CollisionShape2D");
+            .base
+            .get_node_as::<CollisionShape2D>("CollisionShape2D");
     
         collision_shape.set_deferred("disabled".into(), true.to_variant());
     }
@@ -34,8 +34,8 @@ impl Player {
         self.base.show();
     
         let mut collision_shape = self
-           .base
-           .get_node_as::<CollisionShape2D>("CollisionShape2D");
+            .base
+            .get_node_as::<CollisionShape2D>("CollisionShape2D");
     
         collision_shape.set_disabled(false);
     }
