@@ -147,7 +147,7 @@ We've got the music player calls, the hud calls, a show message call. But at the
 Good job if you got this one. No worries if you didn't. `bind_mut` is a curve ball.
 
 # The Hard Timeout
-This is the hardest part. Of the entire application. Every line of code. This right here is the hardest. If you didn't get it no worries. If you did congrats.
+This is the hardest part. Of the entire application. Every line of code. This right here is the hardest. If you didn't get it no worries. If you did congrats. I know I didn't.
 
 ###### mob timer timeout
 ```
@@ -222,7 +222,7 @@ let range = {
 };
 ```
 
-Okay so the easy parts first. We call `self.base.add_child()`. It does what it says on the tin. There is a `.clone()` and `.upcast()` this is to play nice with rust's borrowing semantics. If its going to leave your scope, you usually make a clone. You can do more things. `move` or the like. But `clone()` is fine. If you need even more performance then evaluate that. But for our case `move` isn't possible because we still need that scene. We `.cast` that into `Mob` and get the `mut mob` variable.
+Okay so the easy parts first. We call `self.base.add_child()`. It does what it says on the tin. There is a `.clone()` and `.upcast()` this is to play nice with rust's borrowing and type semantics. If its going to leave your scope, you usually make a clone. You can do more things. `move` or the like. But `clone()` is fine. If you need even more performance then evaluate that. But for our case `move` isn't possible because we still need that scene. We `.cast` that into `Mob` and get the `mut mob` variable.
 
 This is the easy stuff. Here's the headscratcher. You open a closure to make a local scope. We call `let mob = mob.bind()` so we've shadowed mob into its own thing. Then we generate a range with `.gen_range(...)`. Notice the absent semi colon. That means its return it assined to the `range` variable.
 
@@ -269,7 +269,7 @@ At this point you've now crafted everything you need to make the game happen. Fo
 
 Go check out the [Gdext Github](https://github.com/godot-rust/gdext). If you have any questions with Godot Rust (not this tutorial though :sweat_smile:) join us in the [discord](https://discord.com/invite/aKUCJ8rJsc).
 
-If you notice any errors in this tutorial or anything is confusing, go to the [tutorial github](https://github.com/0awful/literate-dodge-the-creeps-rust) and make a change to this code to correct it. I love the help. And welcome you to the the wonderful world of godot rust. 
+If you notice any errors in this tutorial or anything is confusing, go to the [tutorial github](https://github.com/0awful/literate-dodge-the-creeps-rust) and make a change to this code to correct it. I love the help. And welcome to the the wonderful world of godot rust. 
 
 ###### file:../src/lib.rs
 ```rust

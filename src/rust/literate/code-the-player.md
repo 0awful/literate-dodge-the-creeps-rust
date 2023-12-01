@@ -98,10 +98,10 @@ Here we have a couple things we can talk about.
 As you may remember we opted to set the base value on the player struct. We didn't have to do it, but we chose to. Here is where we first get the benefits from choosing to do this. `self.base` is a reference to the properties of the godot node. We use it to modify the position of that godot node. If you need to change something in the engine, you'll often do that through `self.base`. Additionally we use `self.screen_size` in this case. This is a reference to the property on the `player` struct. Anything you add to the struct you can get from `self.{property}`. You'll see how more shortly. 
 
 ## The `real` type
-The `real` type is a godot floating point number. Is is f32 or f64? Yes. Here's the [official real docs](https://godot-rust.github.io/docs/gdext/master/godot/prelude/type.real.html). You can choose to make it f64. But in general you ignore the underlying floating point type and convert your `float`s into `real`s. Here we do it by using `real::from_f64(delta)`. Where `delta` is the `process(delta)` value or the time between two frames. Its more complicated than that in reality, but you don't need to know how or why. 
+The `real` type is a godot floating point number. Is is f32 or f64? Yes. Here's the [official real docs](https://godot-rust.github.io/docs/gdext/master/godot/prelude/type.real.html). You can choose to make it f64. But in general you ignore the underlying floating point type and convert your `float`s into `real`s. Here we do it by using `real::from_f64(delta)`. Where `delta` is the `process(delta)` value or the time between two frames. `delta` more complicated than that in reality, but you don't need to know how or why at this time. If you're curious check out [Understanding Delta at KidsCanCode](https://kidscancode.org/godot_recipes/4.x/basics/understanding_delta/index.html) and [this video from Jonas Tyroller](https://www.youtube.com/watch?v=yGhfUcPjXuE) for even more depth.
 
 # Initializing the player node
-Okay so we can move the player with that code, but where does it go? If you did the required reading of the [[Rust Hello World Tutorial]](https://godot-rust.github.io/book/intro/hello-world.html) you probably already know. But if you don't that's fine too.
+Okay so we can move the player with that code, but where does it go? If you did the required reading of the [Rust Hello World Tutorial](https://godot-rust.github.io/book/intro/hello-world.html) you probably already know. But if you don't that's fine too.
 
 Our player.rs file has the following loose structure.
 ###### file:../src/player.rs
@@ -131,7 +131,7 @@ impl IArea2D for Player {
 
 And here we have another macro `#[godot_api]`. This does magic behind the scenes. If you leave it off things won't work correctly, but `cargo` will nicely let you know it is missing. 
 
-We just wrote the `player process code` leaving a few placeholder's we'll fill out shortly. Lets wrap up this `impl` first
+We just wrote the `player process code` leaving a few placeholder's we'll fill out shortly. Lets wrap up the `IArea2D` `impl` first.
 
 ###### player init
 ```rust
@@ -146,7 +146,7 @@ fn init(base: Base<Area2D>) -> Self {
 
 Because we use base in the `Player` `struct` we need to have base as a parameter in our `init`. This is then handled automagically by `gdext`. 
 
-But also what the heck. `screen_size` isn't `(0.0, 0.0)`. We handle this in `ready`. We do this because the godot gscript tutorial does this. The reason it does that is because of lifecycle methods. Here's the docs on [ready](https://docs.godotengine.org/en/stable/tutorials/best_practices/godot_notifications.html#ready-vs-enter-tree-vs-notification-parented) and [init](https://docs.godotengine.org/en/stable/tutorials/best_practices/godot_notifications.html#init-vs-initialization-vs-export). Given godot recommends you use ready. You should use ready for these sorts of things. You don't need to understand the depths of this at this time.
+But also what the heck. `screen_size` isn't `(0.0, 0.0)`. We handle this in `ready`. We do this because the godot gscript tutorial does this. The reason it does that is because of lifecycle methods. Here's the docs on [ready](https://docs.godotengine.org/en/stable/tutorials/best_practices/godot_notifications.html#ready-vs-enter-tree-vs-notification-parented) and [init](https://docs.godotengine.org/en/stable/tutorials/best_practices/godot_notifications.html#init-vs-initialization-vs-export). Given godot recommends you use ready. You should use ready for these sorts of things. You don't need to understand the depths of this at this time. We will talk about it more later if you're curious.
 
 ###### player ready
 ```rust
@@ -159,10 +159,12 @@ fn ready(&mut self) {
 
 Here we set the screen size and hide the player. We do this because we don't want them visible when we are on the main menu. 
 
-At this point we could place this node in the scene. It wouldn't do what we want yet. But we could add the node. In order to add a node you need an `init` function. Otherwise the godot editor won't expose it as a node you can add to your scene. We have now used `ready` `process` and `init`. These are godot lifecycle methods and you should consult the godot documentation to learn more about them.
+At this point we could place this node in the scene. It wouldn't do what we want yet. But we could add the node. In order to add a node you need an `init` function. Otherwise the godot editor won't expose it as a node you can add to your scene. We have now used `ready` `process` and `init`. These are the main godot lifecycle methods. You'll be seeing a lot of them.
+
+If you did choose to add the node at this time you may discover some interesting behavior. If you `cargo build` and open the godot editor, then add the node as described by [The hello world tutorial](https://godot-rust.github.io/book/intro/hello-world.html) you may find that later `cargo build`s automatically update your nodes within godot. This is because it is reading from your library when you start the game. This means if you change the library it may pick up the changes. But it doesn't do this always and doesn't do it for all kinds of changes. You can force it to pick up your changes by restarting the editor. We'll talk more about this in the next section.
 
 # Preparing for collisions and the player impl
-We have some functions that we put in the `I{NodeName}` `impl` and others we put in the `Player` `impl`. This distinction is because we have some code that is attaching to engine functions and others that are purely our creations. If its ours it goes in the `Player` `impl`. This distinction will become easier to understand with time.
+We have some functions that we put in the `I{NodeName}` `impl` and others we put in the `Player` `impl`. This distinction is because we have some code that is attaching to existing engine functions and others that are purely our creations. If its ours it goes in the `Player` `impl`. This distinction will become easier to understand with time.
 
 ###### define the player impl
 ```rust
@@ -211,7 +213,7 @@ fn hit();
 
 That's it. Signals are very easy.
 
-Lets set up the start function. We need this because we will be respawning the player and therefore can't rely on the `init` and `ready` functions.
+Lets set up the start function. We need this because we will be respawning the player and therefore can't rely on the `init` and `ready` functions to handle all of this logic.
 
 ###### player start logic
 ```rust
@@ -234,7 +236,7 @@ Now seems like a great time to talk about `get_node_as::<T>("STRING")`
 
 This is how you access the children of your node. Our player node will have a few children. You've seen us get a `CollisionShape2D`, we will also have an `AnimatedSprite2D`. When we add our player to the scene we will have to manually add these children in the editor. This is why it is easier to do the rust code first. Because we cannot add the player node until we write this code, so we would have to make a temporary node. Give it children. Then move those children to our player and then make that player the root of the scene. We could absolutely do it that way. But I'm of the belief this is easier. 
 
-The string is the name of the node. We can rename the node in the scene to anything. If you have multiple of the same type you will be forced to rename at least one of them. No two nodes can have the same name. You may find errors here. If you wrote `"CollisionShape2d"` instead of `"CollisionShape2D"` you'd have an error that may be difficult to diagnose. Be aware of this and check this when you debug. 
+The string is the name of the node. We can rename the node in the scene to anything. If you have multiple of the same type you will be forced to rename at least one of them. No two nodes can have the same name. You may find errors here. If you wrote `"CollisionShape2d"` instead of `"CollisionShape2D"` you'd have an error that may be difficult to diagnose. Be aware of this and check this when you debug.
 
 # Animating the player
 
@@ -276,7 +278,11 @@ animated_sprite.play_ex().name(animation.into()).done();
 
 Here we are stringly matching the name of animations we will set up in the editor. If they don't match exactly you'll have errors. We also handle flipping x/y
 
-What does play_ex mean?
+What does play_ex mean? Well in this case we need to give it a little more information to get our desired behavior. We need to tell it which animation to play. We do that by calling the `_ex()` variant. That returns a [`ExPlay`](https://godot-rust.github.io/docs/gdext/master/godot/engine/animated_sprite_2d/struct.ExPlay.html). On that `ExPlay` we call `.name()` with the name of the animation to play and then `.done()` to play it. 
+
+If you didn't need to specify extra information you could call `.play()`.
+
+This pattern is common, where a simple method is exposed like `.play()` or `.connect()` which runs via the godot default values. If you need to use different values you call the `_ex()` version of the function instead and chain the values you need to set. This is [`Builder` semantics](https://rust-unofficial.github.io/patterns/patterns/creational/builder.html).
 
 Once again you now know all you'd need to know to stop the animation. Take a stab at implementing it. It occurs in the else block of the `velocity.length() > 0.0` `if` statement. 
 
@@ -290,6 +296,8 @@ animated_sprite.stop();
 ```
 
 Its that easy.
+
+We don't need to say anything special so we don't need to use `.stop_ex()`
 
 If you editor didn't automatically perform the imports for you. Here are the imports.
 ###### player imports

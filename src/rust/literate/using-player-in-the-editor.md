@@ -12,7 +12,7 @@ This will create your output directory in the standard rust directory of `target
 
 At this time you should open your godot editor if it isn't already. If it is already open you may need to restart it. There is a handy shortcut `Project` > `Reload Current Project`
 
-When things are set up correctly you'll know because the `Player` node will now exist within the possible nodes you can create. Clicking `+` or `+ other node` will open the modal. Type player and if you find it you've got it working.
+When things are set up correctly you'll know because the `Player` node will now exist within the possible nodes you can create. Clicking `+`, `+ other node`, or the 'add node hotkey' will open the modal. Type player and if you find it you've got it working. If you don't find it refer to the [hello world tutorial](https://godot-rust.github.io/book/intro/hello-world.html)
 
 # Adding the children
 
