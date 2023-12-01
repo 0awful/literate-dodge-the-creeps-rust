@@ -35,13 +35,13 @@ impl IRigidBody2D for Mob {
         let mut sprite = self
             .base
             .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
-        
+
         let anim_names = sprite.get_sprite_frames().unwrap().get_animation_names();
         let anim_names = anim_names.to_vec();
         let mut rng = rand::thread_rng();
-        
+
         let animation_name = anim_names.choose(&mut rng).unwrap();
-        
+
         sprite.set_animation(animation_name.into());
         sprite.play();
     }

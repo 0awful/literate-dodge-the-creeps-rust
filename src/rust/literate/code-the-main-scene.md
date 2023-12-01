@@ -17,6 +17,7 @@ Take a moment and try to do it without any guidance. But you will hit things you
 <<struct impl>>
 
 <<class impl>>
+
 ```
 ## Imports
 ###### imports
@@ -79,15 +80,15 @@ This is where things start to go in direction's you'll find challenging. Lets st
 ```rust
 #[godot_api]
 impl MainScene {
-    <<game over>>
+<<game over>>
 
-    <<new game>>
+<<new game>>
 
-    <<score timer timeout>>
+<<score timer timeout>>
 
-    <<start timer timeout>>
+<<start timer timeout>>
 
-    <<mob timer timeout>>
+<<mob timer timeout>>
 }
 ```
 
@@ -95,25 +96,25 @@ The [GDScript Tutorial](https://docs.godotengine.org/en/stable/getting_started/f
 ## Easy Timeouts
 ###### start timer timeout
 ```rust
-#[func]
-pub fn on_start_timer_timeout(&mut self) {
-    let mut score_timer = self.base.get_node_as::<Timer>("ScoreTimer");
-    let mut mob_timer = self.base.get_node_as::<Timer>("MobTimer");
-    score_timer.start();
-    mob_timer.start();
-}
+    #[func]
+    pub fn on_start_timer_timeout(&mut self) {
+        let mut score_timer = self.base.get_node_as::<Timer>("ScoreTimer");
+        let mut mob_timer = self.base.get_node_as::<Timer>("MobTimer");
+        score_timer.start();
+        mob_timer.start();
+    }
 ```
 Look at that. This isn't hard.
 
 ###### score timer timeout
 ```rust
-#[func]
-pub fn on_score_timer_timeout(&mut self) {
-    self.score += 1.0;
+    #[func]
+    pub fn on_score_timer_timeout(&mut self) {
+        self.score += 1.0;
 
-    let mut hud = self.base.get_node_as::<Hud>("HUD");
-    hud.bind_mut().update_score(self.score);
-}
+        let mut hud = self.base.get_node_as::<Hud>("HUD");
+        hud.bind_mut().update_score(self.score);
+    }
 ```
 The gotcha here is `bind_mut`. Its because the hud is another rust component. To gain access we use bind. Because we are performing a modifying call we have to `bind_mut()`
 
@@ -121,25 +122,25 @@ The gotcha here is `bind_mut`. Its because the hud is another rust component. To
 This is a lot of things you chould be okay with doing. There's the same `bind_mut()` gotcha. But once you're past that its the same game
 ###### new game
 ```rust
-#[func]
-pub fn new_game(&mut self) {
-    self.score = 0.0;
-    let mut player = self.base.get_node_as::<Player>("Player");
-    let marker = self.base.get_node_as::<Marker2D>("StartPosition");
-    let mut player = player.bind_mut();
-    player.start(marker.get_global_position());
+    #[func]
+    pub fn new_game(&mut self) {
+        self.score = 0.0;
+        let mut player = self.base.get_node_as::<Player>("Player");
+        let marker = self.base.get_node_as::<Marker2D>("StartPosition");
+        let mut player = player.bind_mut();
+        player.start(marker.get_global_position());
 
-    let mut start_timer = self.base.get_node_as::<Timer>("StartTimer");
-    start_timer.start();
+        let mut start_timer = self.base.get_node_as::<Timer>("StartTimer");
+        start_timer.start();
 
-    let mut hud = self.base.get_node_as::<Hud>("HUD");
-    let mut hud = hud.bind_mut();
-    hud.update_score(self.score);
-    hud.show_message_text("Get Ready".into());
+        let mut hud = self.base.get_node_as::<Hud>("HUD");
+        let mut hud = hud.bind_mut();
+        hud.update_score(self.score);
+        hud.show_message_text("Get Ready".into());
 
-    let mut music_player = self.base.get_node_as::<AudioStreamPlayer2D>("Music");
-    music_player.play();
-}
+        let mut music_player = self.base.get_node_as::<AudioStreamPlayer2D>("Music");
+        music_player.play();
+    }
 ```
 
 We've got the music player calls, the hud calls, a show message call. But at the end of the day this is just `get_node_as` with a couple instances of `bind_mut()`
@@ -151,18 +152,18 @@ This is the hardest part. Of the entire application. Every line of code. This ri
 
 ###### mob timer timeout
 ```
-#[func]
-pub fn on_mob_timer_timeout(&mut self) {
-    <<instantiate as>>
-    
-    <<pick location>>
-    
-    <<set rotation>>
-    
-    <<add child>>
-    
-    <<make the mob go>>
-}
+    #[func]
+    pub fn on_mob_timer_timeout(&mut self) {
+<<instantiate as>>
+
+<<pick location>>
+
+<<set rotation>>
+
+<<add child>>
+
+<<make the mob go>>
+    }
 ```
 
 Lets talk about why its hard before we get into it.
@@ -170,22 +171,22 @@ Lets talk about why its hard before we get into it.
 We have a somewhat solvable problem of picking the location on the path. That's something you could pretty easily get. At the same time. Its using ranges and RNG as well as setting progress. 
 ###### pick location
 ```rust
-let mut mob_spawn_location = self
-    .base
-    .get_node_as::<PathFollow2D>("MobPath/MobSpawnLocation");
+        let mut mob_spawn_location = self
+            .base
+            .get_node_as::<PathFollow2D>("MobPath/MobSpawnLocation");
 
-let mut rng = rand::thread_rng();
-let progress = rng.gen_range(u32::MIN..u32::MAX);
+        let mut rng = rand::thread_rng();
+        let progress = rng.gen_range(u32::MIN..u32::MAX);
 
-mob_spawn_location.set_progress(progress as f32);
-mob_scene.set_position(mob_spawn_location.get_position());
+        mob_spawn_location.set_progress(progress as f32);
+        mob_scene.set_position(mob_spawn_location.get_position());
 ```
 
 But you may not have even hit this problem because
 
 ###### instantiate as
 ```rust
-let mut mob_scene = self.mob_scene.instantiate_as::<RigidBody2D>();
+        let mut mob_scene = self.mob_scene.instantiate_as::<RigidBody2D>();
 ```
 
 To even see this part of the problem you need to crack `instantiate_as`. You've never used it before. Its the only time we use it in this project. We use this because we are turning a scene into a node. `instantiate_as::<T>()` takes a `PackedScene` and returns a `Gd<T>` (I told you `Gd<>` was important). But this function is failable. This will panic and crash if it can't become `T`. See the documentation [here](https://godot-rust.github.io/docs/gdext/master/godot/prelude/trait.PackedSceneExt.html#method.instantiate_as).
@@ -195,31 +196,33 @@ If you were productionizing this you might want to use `try_instantiate_as` whic
 ###### set rotation
 And then you have the hardest math problem in the project. If you aren't up on your geometry, well, you aren't going to solve it. I view myself as a mathy kind of person. I couldn't do this. If you know you know. If you don't that's what tutorials are for. To be fair. You could've stolen this from the [GDScript Tutorial](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/05.the_main_game_scene.html#main-script) but you would've needed to crack a few other tough parts to even get here.
 ```
-let mut direction = mob_spawn_location.get_rotation() + PI / 2.0;
-direction += rng.gen_range(-PI / 4.0..PI / 4.0);
+        let mut direction = mob_spawn_location.get_rotation() + PI / 2.0;
+        direction += rng.gen_range(-PI / 4.0..PI / 4.0);
 
-mob_scene.set_rotation(direction);
+        mob_scene.set_rotation(direction);
 ```
 
 Making it go is a little easier, but has a weird wrinkle
 ###### make the mob go
 ```rust
-mob.set_linear_velocity(Vector2::new(range, 0.0).rotated(direction));
+        mob.set_linear_velocity(Vector2::new(range, 0.0).rotated(real::from_f32(direction)));
 ```
 
 So you `set_linear_velocity()` with your brand new `Vector2` that you give a little rotation to. It's not hard. I totally didn't spend an hour trying to crack this. Nope. That didn't happen.
+
+Also you use `real::from_f32` to support double precision if you want it.
 
 To cap it all off you have to add a child programatically. Which is the first and only time you do it in this project.
 
 ###### add child
 ```rust
-self.base.add_child(mob_scene.clone().upcast());
+        self.base.add_child(mob_scene.clone().upcast());
 
-let mut mob = mob_scene.cast::<Mob>();
-let range = {
-    let mob = mob.bind();
-    rng.gen_range(mob.min_speed..mob.max_speed)
-};
+        let mut mob = mob_scene.cast::<Mob>();
+        let range = {
+            let mob = mob.bind();
+            rng.gen_range(mob.min_speed..mob.max_speed)
+        };
 ```
 
 Okay so the easy parts first. We call `self.base.add_child()`. It does what it says on the tin. There is a `.clone()` and `.upcast()` this is to play nice with rust's borrowing and type semantics. If its going to leave your scope, you usually make a clone. You can do more things. `move` or the like. But `clone()` is fine. If you need even more performance then evaluate that. But for our case `move` isn't possible because we still need that scene. We `.cast` that into `Mob` and get the `mut mob` variable.
@@ -236,26 +239,26 @@ If you struggled to get this. Of course you did. I don't believe anyone doing th
 This is using something new, but if you referenced the docs, you might have been able to get it. Its very intuitive.
 ###### game over
 ```rust
-#[func]
-pub fn game_over(&mut self) {
-    let mut score_timer = self.base.get_node_as::<Timer>("ScoreTimer");
-    let mut mob_timer = self.base.get_node_as::<Timer>("MobTimer");
-    score_timer.stop();
-    mob_timer.stop();
+    #[func]
+    pub fn game_over(&mut self) {
+        let mut score_timer = self.base.get_node_as::<Timer>("ScoreTimer");
+        let mut mob_timer = self.base.get_node_as::<Timer>("MobTimer");
+        score_timer.stop();
+        mob_timer.stop();
 
-    self.base
-        .get_tree()
-        .unwrap()
-        .call_group("mobs".into(), "queue_free".into(), &[]);
+        self.base
+            .get_tree()
+            .unwrap()
+            .call_group("mobs".into(), "queue_free".into(), &[]);
 
-    let mut hud = self.base.get_node_as::<Hud>("HUD");
-    hud.bind_mut().show_game_over();
+        let mut hud = self.base.get_node_as::<Hud>("HUD");
+        hud.bind_mut().show_game_over();
 
-    let mut music_player = self.base.get_node_as::<AudioStreamPlayer2D>("Music");
-    music_player.stop();
-    let mut death_sound = self.base.get_node_as::<AudioStreamPlayer2D>("DeathSound");
-    death_sound.play();
-}
+        let mut music_player = self.base.get_node_as::<AudioStreamPlayer2D>("Music");
+        music_player.stop();
+        let mut death_sound = self.base.get_node_as::<AudioStreamPlayer2D>("DeathSound");
+        death_sound.play();
+    }
 ```
 You need to get the tree and then tell it to "queue_free". This requires you to get the `base` `get_tree` on the base. That returns an optional so `unwrap()` then `call_group` to free it. The only hard part is the `variant`. If you remember from the `emit` part of this project you can make an empty variant with `&[]`. We don't need to say anything other than `queue_free`. So `&[]` will get the job done. 
 
@@ -284,6 +287,7 @@ struct DodgeTheCreeps;
 
 #[gdextension]
 unsafe impl ExtensionLibrary for DodgeTheCreeps {}
+
 ```
 Ps. This is what [lib.rs](https://github.com/0awful/literate-dodge-the-creeps-rust/blob/main/src/rust/src/lib.rs) should look like
 
