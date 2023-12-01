@@ -46,34 +46,34 @@ We need to do a couple things for the player to do what we'd like. We need to se
 
 ###### player process
 ```rust
-fn process(&mut self, delta: f64) {
-    let mut velocity = Vector2::new(0.0, 0.0);
+    fn process(&mut self, delta: f64) {
+        let mut velocity = Vector2::new(0.0, 0.0);
 
-    let input = Input::singleton();
-    if input.is_action_pressed("move_right".into()) {
-        velocity += Vector2::RIGHT;
-    }
-    if input.is_action_pressed("move_left".into()) {
-        velocity += Vector2::LEFT;
-    }
-    if input.is_action_pressed("move_down".into()) {
-        velocity += Vector2::DOWN;
-    }
-    if input.is_action_pressed("move_up".into()) {
-        velocity += Vector2::UP;
-    }
+        let input = Input::singleton();
+        if input.is_action_pressed("move_right".into()) {
+            velocity += Vector2::RIGHT;
+        }
+        if input.is_action_pressed("move_left".into()) {
+            velocity += Vector2::LEFT;
+        }
+        if input.is_action_pressed("move_down".into()) {
+            velocity += Vector2::DOWN;
+        }
+        if input.is_action_pressed("move_up".into()) {
+            velocity += Vector2::UP;
+        }
 
-    <<get sprite node>>
-    if velocity.length() > 0.0 {
-        velocity = velocity.normalized() * self.speed;
+<<get sprite node>>
+        if velocity.length() > 0.0 {
+            velocity = velocity.normalized() * self.speed;
 
-    <<animate sprite node>>
-    } else {
-        <<handle stopping the animation>>
+<<animate sprite node>>
+        } else {
+<<handle stopping the animation>>
+        }
+
+<<move the player>>
     }
-
-    <<move the player>>
-}
 ```
 
 This means we also need to set up these actions within our godot editor. This is done identically to the godot example so reference the official dodge the creeps example for setting that up. The same will be true of animations and setting up the collision shape. But we need to do a little more before we can set that up.
@@ -81,13 +81,13 @@ This means we also need to set up these actions within our godot editor. This is
 And lets return to moving the player
 ###### move the player
 ```rust
-let change = velocity * real::from_f64(delta);
-let position = self.base.get_global_position() + change;
-let position = Vector2::new(
-    position.x.clamp(0.0, self.screen_size.x),
-    position.y.clamp(0.0, self.screen_size.y),
-);
-self.base.set_global_position(position)
+        let change = velocity * real::from_f64(delta);
+        let position = self.base.get_global_position() + change;
+        let position = Vector2::new(
+            position.x.clamp(0.0, self.screen_size.x),
+            position.y.clamp(0.0, self.screen_size.y),
+        );
+        self.base.set_global_position(position)
 ```
 Here we have a couple things we can talk about.
 
@@ -121,11 +121,11 @@ The `move the player` code goes in `IArea2D` `impl` which handles the `init` `re
 ```rust
 #[godot_api]
 impl IArea2D for Player {
-    <<player init>>
+<<player init>>
 
-    <<player ready>>
+<<player ready>>
 
-    <<player process>>
+<<player process>>
 }
 ```
 
@@ -135,13 +135,13 @@ We just wrote the `player process code` leaving a few placeholder's we'll fill o
 
 ###### player init
 ```rust
-fn init(base: Base<Area2D>) -> Self {
-    Player {
-        speed: 400.0,
-        screen_size: Vector2::new(0.0, 0.0),
-        base,
+    fn init(base: Base<Area2D>) -> Self {
+        Player {
+            speed: 400.0,
+            screen_size: Vector2::new(0.0, 0.0),
+            base,
+        }
     }
-}
 ```
 
 Because we use base in the `Player` `struct` we need to have base as a parameter in our `init`. This is then handled automagically by `gdext`. 
@@ -150,11 +150,11 @@ But also what the heck. `screen_size` isn't `(0.0, 0.0)`. We handle this in `rea
 
 ###### player ready
 ```rust
-fn ready(&mut self) {
-    let viewport = self.base.get_viewport_rect();
-    self.screen_size = viewport.size;
-    self.base.hide();
-}
+    fn ready(&mut self) {
+        let viewport = self.base.get_viewport_rect();
+        self.screen_size = viewport.size;
+        self.base.hide();
+    }
 ```
 
 Here we set the screen size and hide the player. We do this because we don't want them visible when we are on the main menu. 
@@ -170,28 +170,28 @@ We have some functions that we put in the `I{NodeName}` `impl` and others we put
 ```rust
 #[godot_api]
 impl Player {
-    <<hit signal>>
+<<hit signal>>
 
-    <<player collision logic>>
+<<player collision logic>>
 
-    <<player start logic>>
+<<player start logic>>
 }
 ```
 We will have this rough structure.
 
 ###### player collision logic
 ```rust
-#[func]
-fn on_player_body_entered(&mut self) {
-    self.base.hide();
-    self.base.emit_signal("hit".into(), &[]);
- 
-    let mut collision_shape = self
-        .base
-        .get_node_as::<CollisionShape2D>("CollisionShape2D");
+    #[func]
+    fn on_player_body_entered(&mut self) {
+        self.base.hide();
+        self.base.emit_signal("hit".into(), &[]);
 
-    collision_shape.set_deferred("disabled".into(), true.to_variant());
-}
+        let mut collision_shape = self
+            .base
+            .get_node_as::<CollisionShape2D>("CollisionShape2D");
+
+        collision_shape.set_deferred("disabled".into(), true.to_variant());
+    }
 ```
 
 So when we are hit we hide our player, hide the collision body, and emit a signal. Nothing special right? Well if you do some digging into the [engine documentation](https://docs.godotengine.org/en/stable/classes/class_area2d.html#methods) you'll find that `body entered` (the signal we'll attach to this) has an argument it provides.
@@ -207,8 +207,8 @@ We also use `true.to_variant()`. Its another Variant Type. This is a dynamic god
 Now it is time to set up our signal.
 ###### hit signal
 ```rust
-#[signal]
-fn hit();
+    #[signal]
+    fn hit();
 ```
 
 That's it. Signals are very easy.
@@ -217,17 +217,17 @@ Lets set up the start function. We need this because we will be respawning the p
 
 ###### player start logic
 ```rust
-#[func]
-pub fn start(&mut self, pos: Vector2) {
-    self.base.set_global_position(pos);
-    self.base.show();
+    #[func]
+    pub fn start(&mut self, pos: Vector2) {
+        self.base.set_global_position(pos);
+        self.base.show();
 
-    let mut collision_shape = self
-        .base
-        .get_node_as::<CollisionShape2D>("CollisionShape2D");
+        let mut collision_shape = self
+            .base
+            .get_node_as::<CollisionShape2D>("CollisionShape2D");
 
-    collision_shape.set_disabled(false);
-}
+        collision_shape.set_disabled(false);
+    }
 ```
 
 We set the player's position, show the player and enable collision. Standard. 
@@ -251,9 +251,9 @@ Here I'll give you a little picture
 
 ###### get sprite node
 ```rust
-let mut animated_sprite = self
-    .base
-    .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
+        let mut animated_sprite = self
+            .base
+            .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
 ```
 
 This pattern is going to be central to `gdext` development. You will write a line like this one in every project. It'll probably be the first line you can write by memory. If you have autocomplete, code snippets, or the like, this would be a great candidate for something to set that up for.
@@ -262,18 +262,18 @@ Now its time to animate. This is a little more difficult. Remember this is happe
 
 ###### animate sprite node
 ```rust
-let animation;
+        let animation;
 
-if velocity.x != 0.0 {
-    animation = "right";
-    animated_sprite.set_flip_v(false);
-    animated_sprite.set_flip_h(velocity.x < 0.0)
-} else {
-    animation = "up";
-    animated_sprite.set_flip_v(velocity.y > 0.0)
-}
+        if velocity.x != 0.0 {
+            animation = "right";
+            animated_sprite.set_flip_v(false);
+            animated_sprite.set_flip_h(velocity.x < 0.0)
+        } else {
+            animation = "up";
+            animated_sprite.set_flip_v(velocity.y > 0.0)
+        }
 
-animated_sprite.play_ex().name(animation.into()).done();
+        animated_sprite.play_ex().name(animation.into()).done();
 ```
 
 Here we are stringly matching the name of animations we will set up in the editor. If they don't match exactly you'll have errors. We also handle flipping x/y
@@ -292,7 +292,7 @@ Here's another photo.
 
 ###### handle stopping the animation
 ```rust
-animated_sprite.stop();
+        animated_sprite.stop();
 ```
 
 Its that easy.

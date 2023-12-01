@@ -25,7 +25,7 @@ It's time for you to give this another go. From what you know now you can be pre
 ```rs
 <<api macro>>
 impl Mob {
-    <<offscreen cleanup>>
+<<offscreen cleanup>>
 }
 ```
 
@@ -33,9 +33,9 @@ impl Mob {
 ```rs
 <<api macro>>
 impl IRigidBody2D for Mob {
-    <<init>>
+<<init>>
 
-    <<ready>>
+<<ready>>
 }
 ```
 
@@ -74,33 +74,33 @@ Next we move on to the init of the impl. Its not much different from the `player
 
 ###### init
 ```rust
-fn init(base: Base<RigidBody2D>) -> Self {
-    Mob {
-        min_speed: 150.0,
-        max_speed: 250.0,
-        base,
+    fn init(base: Base<RigidBody2D>) -> Self {
+        Mob {
+            min_speed: 150.0,
+            max_speed: 250.0,
+            base,
+        }
     }
-}
 ```
 
 You've got some magic numbers you could pull out as consts if you'd like. 
 
 ###### ready
 ```rust
-fn ready(&mut self) {
-    let mut sprite = self
-        .base
-        .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
-    
-    let anim_names = sprite.get_sprite_frames().unwrap().get_animation_names();
-    let anim_names = anim_names.to_vec();
-    let mut rng = rand::thread_rng();
-    
-    let animation_name = anim_names.choose(&mut rng).unwrap();
-    
-    sprite.set_animation(animation_name.into());
-    sprite.play();
-}
+    fn ready(&mut self) {
+        let mut sprite = self
+            .base
+            .get_node_as::<AnimatedSprite2D>("AnimatedSprite2D");
+
+        let anim_names = sprite.get_sprite_frames().unwrap().get_animation_names();
+        let anim_names = anim_names.to_vec();
+        let mut rng = rand::thread_rng();
+
+        let animation_name = anim_names.choose(&mut rng).unwrap();
+
+        sprite.set_animation(animation_name.into());
+        sprite.play();
+    }
 ```
 
 Here you use the mysterious 'special import' great work if you got it. Rust has a [`rand` crate](https://docs.rs/rand/latest/rand/) everyone uses and the language doesn't have any randoms. This means we have an update to the cargo.toml. I'll share that later if you're following along.
@@ -122,10 +122,10 @@ And we have what I imagine would've been the hardest to guess, but the most intu
 
 ###### offscreen cleanup
 ```
-#[func]
-fn on_visibility_screen_exited(&mut self) {
-    self.base.queue_free();
-}
+    #[func]
+    fn on_visibility_screen_exited(&mut self) {
+        self.base.queue_free();
+    }
 ```
 
 You use base because you're acting on the godot node and not your struct.
