@@ -138,7 +138,7 @@ mod mob;
 Then you go through the standard process of adding this item to godot. Follow the [GDScript Tutorial for Mobs](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/04.creating_the_enemy.html#). Nothing is different for this section.
 
 # Cargo.toml
-If you're looking for it. Here it is.
+If you're looking for it. Here it is. But know you can also run `cargo add rand` here to get it. This works to add any dependency.
 
 ###### file:../Cargo.toml
 ```toml

@@ -2,7 +2,7 @@
 
 We take a brief divergence from the GDScript tutorial to [Set up the hud](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html#contents) before the Main Scene. We do this because we want to use this in the Main Scene. Its easier to have it made before you need to use it.
 
-The hud is much of what you've already encountered however it has a greater emphasis on the `impl`. Our hud will expose functions for our main scene to use. We do that by having public functions on our struct. That being said the shape of the file is very much the same. Give it a go. Here's the [GDScript Ref](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html#contents)
+The hud is much of what you've already encountered however it has a greater emphasis on the `Hud` `impl`. Our hud will expose functions for our main scene to use. We do that by having public functions on our struct. That being said the shape of the file is very much the same. Give it a go. Here's the [GDScript Ref](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html#contents)
 
 ###### file:../src/hud.rs
 ```
@@ -150,7 +150,13 @@ And the gotcha. We have a function that sets the label twice. Which means that i
 
 Its an [known issue](https://github.com/godot-rust/gdext/issues/432) that has been marked "Not possible at the moment" and "Quite a pain to get working." So we're boned. Abandon all hope. We've failed.
 
-Of course not. In that same issue they call out a fix. Its the one you see above
+Of course not. In that same issue they call out a fix. Its the one you see above.
+
+Here's a great time to mention you can connect signals in rust. This is how you do it. You have a node that emits a signal and a callable that you will connect to the signal. Here that node is the timer node. If the node already existed we could use `get_node_as` to get it, but because we don't we'll create one. We get the node tree and then add a node.
+
+With a reference to our brand new timer node we call `.connect`. The first param is the signal on the timer node we want to connect to. This is a string so be careful to match it correctly. Then you call `self.base.callable()` to make a callable function from one of the functions you have defined. It needs to have the `#[func]` macro to make it work this way. Then you enter the name of the function you want to call. We have prefixed the function name with an `_` to make `cargo` happy. It can't tell that the function is being called so prefixing it with underscore lets it know not to worry about it.
+
+The function body is what the [GDScript Example](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/06.heads_up_display.html#) does.
 
 With that we're done. Be sure to do the [GDScript Example's](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/06.heads_up_display.html#) editor side of this. You should have all the tools you need to make it work.
 
