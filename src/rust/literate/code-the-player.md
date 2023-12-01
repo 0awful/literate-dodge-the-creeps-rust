@@ -146,7 +146,7 @@ fn init(base: Base<Area2D>) -> Self {
 
 Because we use base in the `Player` `struct` we need to have base as a parameter in our `init`. This is then handled automagically by `gdext`. 
 
-But also what the heck. `screen_size` isn't `(0.0, 0.0)`. We handle this in `ready`. TODO: WHY?
+But also what the heck. `screen_size` isn't `(0.0, 0.0)`. We handle this in `ready`. We do this because the godot gscript tutorial does this. The reason it does that is because of lifecycle methods. Here's the docs on [ready](https://docs.godotengine.org/en/stable/tutorials/best_practices/godot_notifications.html#ready-vs-enter-tree-vs-notification-parented) and [init](https://docs.godotengine.org/en/stable/tutorials/best_practices/godot_notifications.html#init-vs-initialization-vs-export). Given godot recommends you use ready. You should use ready for these sorts of things. You don't need to understand the depths of this at this time.
 
 ###### player ready
 ```rust
@@ -180,7 +180,7 @@ We will have this rough structure.
 ###### player collision logic
 ```rust
 #[func]
-fn on_player_body_entered(&mut self, _body: Gd<PhysicsBody2D>) {
+fn on_player_body_entered(&mut self) {
     self.base.hide();
     self.base.emit_signal("hit".into(), &[]);
  
@@ -192,11 +192,15 @@ fn on_player_body_entered(&mut self, _body: Gd<PhysicsBody2D>) {
 }
 ```
 
-So when we are hit we hide our player, hide the collision body, and emit a signal. Nothing special right? Well might I draw your attention to our `_body:Gd<PhysicsBody` param. We do not use it. But we import it for engine purposes. This function will have a couple strange wrinkles like this. TODO: WHYYYYY
+So when we are hit we hide our player, hide the collision body, and emit a signal. Nothing special right? Well if you do some digging into the [engine documentation](https://docs.godotengine.org/en/stable/classes/class_area2d.html#methods) you'll find that `body entered` (the signal we'll attach to this) has an argument it provides.
 
-`emit_signal` has two values. The first is the signal cast into an engine string. The second is the properties to put on that signal. We don't want to set any so we place an empty value of `&[]`.
+![body entered docs snippet](https://github.com/0awful/literate-dodge-the-creeps-rust/tree/main/assets/body_entered.png)
 
-We also use `true.to_variant()`. This is a dynamic godot engine type. It can be many things. The engine uses it in several places. Here we cast to it like we typecast many other things. Nothing too special about it. Something to be aware of. You can learn more [here](https://docs.godotengine.org/en/stable/classes/class_variant.html).
+This means we could take a value but are opting not to. This will come back in the near future.
+
+`emit_signal` has two values. The first is the signal cast into an engine string. The second is the properties to put on that signal. We don't want to set any so we place an empty value of `&[]`. This is an empty [Variant Type](https://docs.godotengine.org/en/stable/classes/class_variant.html).
+
+We also use `true.to_variant()`. Its another Variant Type. This is a dynamic godot engine type. It can be many things. The engine uses it in several places. Here we cast to it like we typecast many other things. Nothing too special about it. Something to be aware of. You can learn more [here](https://docs.godotengine.org/en/stable/classes/class_variant.html).
 
 Now it is time to set up our signal.
 ###### hit signal
@@ -290,7 +294,7 @@ Its that easy.
 If you editor didn't automatically perform the imports for you. Here are the imports.
 ###### player imports
 ```rust
-use godot::engine::{AnimatedSprite2D, Area2D, CollisionShape2D, IArea2D, PhysicsBody2D};
+use godot::engine::{AnimatedSprite2D, Area2D, CollisionShape2D, IArea2D};
 use godot::prelude::*;
 ```
 

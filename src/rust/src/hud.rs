@@ -25,13 +25,14 @@ impl Hud {
     pub fn show_game_over(&mut self) {
         self.show_message_text("Game Over".into());
     
-        let mut message_label = self.base.get_node_as::<Label>("Message");
-        // TODO: FIXME This isn't the same as the game
-        message_label.set_text("Dodge The Creeps".into());
-        message_label.show();
-    
-        let mut button = self.base.get_node_as::<Button>("StartButton");
-        button.show()
+        let mut timer = self.base.get_tree().unwrap().create_timer(1.0).unwrap();
+        timer.connect("timeout".into(), self.base.callable::from_function("show game over", | self.clone() | {
+            let mut message_label = self.base.get_node_as::<Label>("Message");
+            message_label.set_text("Dodge The Creeps".into());
+            message_label.show();
+            let mut button = self.base.get_node_as::<Button>("StartButton");
+            button.show()
+        }));
     }
     
     #[func]

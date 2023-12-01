@@ -1,4 +1,4 @@
-use godot::engine::{AnimatedSprite2D, Area2D, CollisionShape2D, IArea2D, PhysicsBody2D};
+use godot::engine::{AnimatedSprite2D, Area2D, CollisionShape2D, IArea2D};
 use godot::prelude::*;
 
 #[derive(GodotClass)]
@@ -17,7 +17,7 @@ impl Player {
     fn hit();
 
     #[func]
-    fn on_player_body_entered(&mut self, _body: Gd<PhysicsBody2D>) {
+    fn on_player_body_entered(&mut self) {
         self.base.hide();
         self.base.emit_signal("hit".into(), &[]);
      

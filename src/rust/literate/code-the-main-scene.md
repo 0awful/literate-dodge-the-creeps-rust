@@ -49,7 +49,7 @@ pub struct MainScene {
 }
 ```
 
-Everything outside of the `PackedScene` is typical. However we do have a `Gd<T>`. TODO EXPLAIN
+Everything outside of the `PackedScene` is typical. However we do have a `Gd<T>`. This is a very important type in gdext. So important in fact that it is on [the first page](https://godot-rust.github.io/docs/gdext/master/godot/#type-categories) of the gdext docs. Please refer to the documentation [here](https://godot-rust.github.io/docs/gdext/master/godot/obj/struct.Gd.html) to learn more 
 
 ## INode
 This is the next easiest part of this code. It has one new function and it's just like the `player` code in how we use it.
@@ -70,7 +70,7 @@ impl INode for MainScene {
     }
 }
 ```
-As you can see we instantiate the PackedScene as a new empty, like we did the with `Player.screen_size`. Then we assign a value to it with `load` in the `ready` call. This is once again because TODO EXPLAIN WHY.
+As you can see we instantiate the PackedScene as a new empty, like we did the with `Player.screen_size`. Then we assign a value to it with `load` in the `ready` call. This is once again because lifecycles. But you could also argue its because [`load()` might fail](https://godot-rust.github.io/docs/gdext/master/godot/engine/fn.load.html). In rust when you use the struct syntax that we chose in `init` it by convention should not be failable. If it's failable you should use `builder` semantics and provide a `Result<T, E>` value instead. We would be violating that if `load` failed. 
 
 # The Main Event
 This is where things start to go in direction's you'll find challenging. Lets start with the easy parts.
@@ -188,7 +188,9 @@ But you may not have even hit this problem because
 let mut mob_scene = self.mob_scene.instantiate_as::<RigidBody2D>();
 ```
 
-To even see this part of the problem you need to crack `instantiate_as`. You've never used it before. Its the only time we use it in this project. We use this because TODO Explain WHY
+To even see this part of the problem you need to crack `instantiate_as`. You've never used it before. Its the only time we use it in this project. We use this because we are turning a scene into a node. `instantiate_as::<T>()` takes a `PackedScene` and returns a `Gd<T>` (I told you `Gd<>` was important). But this function is failable. This will panic and crash if it can't become `T`. See the documentation [here](https://godot-rust.github.io/docs/gdext/master/godot/prelude/trait.PackedSceneExt.html#method.instantiate_as).
+
+If you were productionizing this you might want to use `try_instantiate_as` which would then allow for you to either attempt to recover or gracefully exit with a helpful error message. 
 
 ###### set rotation
 And then you have the hardest math problem in the project. If you aren't up on your geometry, well, you aren't going to solve it. I view myself as a mathy kind of person. I couldn't do this. If you know you know. If you don't that's what tutorials are for. To be fair. You could've stolen this from the [GDScript Tutorial](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/05.the_main_game_scene.html#main-script) but you would've needed to crack a few other tough parts to even get here.
@@ -202,14 +204,12 @@ mob_scene.set_rotation(direction);
 Making it go is a little easier, but has a weird wrinkle
 ###### make the mob go
 ```rust
-mob.set_linear_velocity(Vector2::new(range, 0.0));
-let lin_vel = mob.get_linear_velocity().rotated(real::from_f32(direction));
-mob.set_linear_velocity(lin_vel);
+mob.set_linear_velocity(Vector2::new(range, 0.0).rotated(direction));
 ```
 
-So you set the linear velocity twice. Why do you do this? TODO EXPLAIN WHY
+So you `set_linear_velocity()` with your brand new `Vector2` that you give a little rotation to. It's not hard. I totally didn't spend an hour trying to crack this. Nope. That didn't happen.
 
-And to cap it all off you have to add a child programatically. Which is the first and only time you do it in this project. And its also kind of weird because of scopes
+To cap it all off you have to add a child programatically. Which is the first and only time you do it in this project.
 
 ###### add child
 ```rust
@@ -217,13 +217,18 @@ self.base.add_child(mob_scene.clone().upcast());
 
 let mut mob = mob_scene.cast::<Mob>();
 let range = {
-    // Local scope bind. Explain the rust
     let mob = mob.bind();
     rng.gen_range(mob.min_speed..mob.max_speed)
 };
 ```
 
-TODO: Why we do this?
+Okay so the easy parts first. We call `self.base.add_child()`. It does what it says on the tin. There is a `.clone()` and `.upcast()` this is to play nice with rust's borrowing semantics. If its going to leave your scope, you usually make a clone. You can do more things. `move` or the like. But `clone()` is fine. If you need even more performance then evaluate that. But for our case `move` isn't possible because we still need that scene. We `.cast` that into `Mob` and get the `mut mob` variable.
+
+This is the easy stuff. Here's the headscratcher. You open a closure to make a local scope. We call `let mob = mob.bind()` so we've shadowed mob into its own thing. Then we generate a range with `.gen_range(...)`. Notice the absent semi colon. That means its return it assined to the `range` variable.
+
+So we've created a range with extra steps? You might ask. Yes, and we're better for it. These extra steps are allowing a borrow to occur. When you `bind()` you are getting something like a `RefCell`. This means you've performed a `borrow`. Which will expire at the end of the scope. But we don't need it past this moment so we do it in a local scope so we can return the `borrow` as fast as possible. If you are still fuzzy, that's okay. This is a lot of knitty gritty rust. Here's some links. [bind](https://godot-rust.github.io/docs/gdext/master/godot/obj/struct.Gd.html#method.bind), [borrowing](https://doc.rust-lang.org/rust-by-example/scope/borrow.html), 
+[Gd](https://godot-rust.github.io/docs/gdext/master/godot/obj/struct.Gd.html#)
+[refcell in easy rust](https://fongyoong.github.io/easy_rust/Chapter_42.html) and [refcell in the rust book](https://doc.rust-lang.org/book/ch15-05-interior-mutability.html)
 
 If you struggled to get this. Of course you did. I don't believe anyone doing this as their first time could have arrived at this themselves. But now you know why and how to do it for the future. Lets wrap this up.
 

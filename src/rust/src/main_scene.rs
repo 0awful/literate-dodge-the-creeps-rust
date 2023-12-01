@@ -98,14 +98,11 @@ impl MainScene {
         
         let mut mob = mob_scene.cast::<Mob>();
         let range = {
-            // Local scope bind. Explain the rust
             let mob = mob.bind();
             rng.gen_range(mob.min_speed..mob.max_speed)
         };
         
-        mob.set_linear_velocity(Vector2::new(range, 0.0));
-        let lin_vel = mob.get_linear_velocity().rotated(real::from_f32(direction));
-        mob.set_linear_velocity(lin_vel);
+        mob.set_linear_velocity(Vector2::new(range, 0.0).rotated(direction));
     }
 }
 
