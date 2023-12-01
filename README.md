@@ -9,7 +9,7 @@ This aims to highlight differences between gdscript and gdext and call out the s
 
 If you are unfamiliar with [literate programming](https://en.wikipedia.org/wiki/Literate_programming) this repository should look very strange to you. Fundamentally it is the exact same as writing a blog post on programming dodge the creeps with the notable difference that the code snippets are then extracted out to directly form source code and an executable. You will therefore need to learn a small [DSL](https://en.wikipedia.org/wiki/Domain-specific_language) to maintain this document. This project uses the literate programming conventions defined by [knot](https://github.com/mqsoh/knot) (Thanks [mqsoh](https://github.com/mqsoh])). 
 
-It is mostly complete. The Godot side has not been implemented and placed in version control. It will be eventually. There's a few TODOs. They'll be handled soon too. 
+It is mostly complete. The Godot side has not been implemented and placed in version control. It will be eventually.
 
 # Building Locally
 ```
