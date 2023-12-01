@@ -17,6 +17,7 @@ Take a moment and try to do it without any guidance. But you will hit things you
 <<struct impl>>
 
 <<class impl>>
+
 ```
 ## Imports
 ###### imports
@@ -286,6 +287,7 @@ struct DodgeTheCreeps;
 
 #[gdextension]
 unsafe impl ExtensionLibrary for DodgeTheCreeps {}
+
 ```
 Ps. This is what [lib.rs](https://github.com/0awful/literate-dodge-the-creeps-rust/blob/main/src/rust/src/lib.rs) should look like
 

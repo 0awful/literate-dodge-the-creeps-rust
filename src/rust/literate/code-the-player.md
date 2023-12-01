@@ -28,7 +28,7 @@ Lets start with making a `player.rs` file at `/rust/src/player.rs` in the future
 pub struct Player {
     speed: real,
     screen_size: Vector2,
-   
+
     #[base]
     base: Base<Area2D>,
 }
@@ -113,6 +113,7 @@ Our player.rs file has the following loose structure.
 <<define the player impl>>
 
 <<define the IArea2D impl>>
+
 ```
 
 The `move the player` code goes in `IArea2D` `impl` which handles the `init` `ready` and `process` functions. 
@@ -262,18 +263,18 @@ Now its time to animate. This is a little more difficult. Remember this is happe
 
 ###### animate sprite node
 ```rust
-        let animation;
+            let animation;
 
-        if velocity.x != 0.0 {
-            animation = "right";
-            animated_sprite.set_flip_v(false);
-            animated_sprite.set_flip_h(velocity.x < 0.0)
-        } else {
-            animation = "up";
-            animated_sprite.set_flip_v(velocity.y > 0.0)
-        }
+            if velocity.x != 0.0 {
+                animation = "right";
+                animated_sprite.set_flip_v(false);
+                animated_sprite.set_flip_h(velocity.x < 0.0)
+            } else {
+                animation = "up";
+                animated_sprite.set_flip_v(velocity.y > 0.0)
+            }
 
-        animated_sprite.play_ex().name(animation.into()).done();
+            animated_sprite.play_ex().name(animation.into()).done();
 ```
 
 Here we are stringly matching the name of animations we will set up in the editor. If they don't match exactly you'll have errors. We also handle flipping x/y
@@ -292,7 +293,7 @@ Here's another photo.
 
 ###### handle stopping the animation
 ```rust
-        animated_sprite.stop();
+            animated_sprite.stop();
 ```
 
 Its that easy.
