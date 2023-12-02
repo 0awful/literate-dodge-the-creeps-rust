@@ -1,4 +1,4 @@
-source              : ./src/rust/literate
+source              : .
 destination         : ./_site
 collections_dir     : .
 plugins_dir         : _plugins # takes an array of strings and loads plugins in that order
