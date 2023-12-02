@@ -1,0 +1,147 @@
+<h1 id="coding-the-mob">Coding the Mob</h1>
+
+<p>It’s time for you to give this another go. From what you know now you can be pretty successful in completing the mob rust code. I’ll give you a high level overview to lead you in the right direction.</p>
+
+<h6 id="filesrcmobrs">file:../src/mob.rs</h6>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;&lt;file imports&gt;&gt;
+
+&lt;&lt;mob struct&gt;&gt;
+
+&lt;&lt;mob impl&gt;&gt;
+
+&lt;&lt;mob RigidBody2D impl&gt;&gt;
+
+</code></pre></div></div>
+
+<h6 id="file-imports">file imports</h6>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;&lt;typical imports&gt;&gt;
+
+&lt;&lt;a special import&gt;&gt;
+</code></pre></div></div>
+
+<h6 id="mob-impl">mob impl</h6>
+<div class="language-rs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;&lt;</span><span class="n">api</span> <span class="k">macro</span><span class="o">&gt;&gt;</span>
+<span class="k">impl</span> <span class="n">Mob</span> <span class="p">{</span>
+<span class="o">&lt;&lt;</span><span class="n">offscreen</span> <span class="n">cleanup</span><span class="o">&gt;&gt;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h6 id="mob-rigidbody2d-impl">mob RigidBody2D impl</h6>
+<div class="language-rs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;&lt;</span><span class="n">api</span> <span class="k">macro</span><span class="o">&gt;&gt;</span>
+<span class="k">impl</span> <span class="n">IRigidBody2D</span> <span class="k">for</span> <span class="n">Mob</span> <span class="p">{</span>
+<span class="o">&lt;&lt;</span><span class="n">init</span><span class="o">&gt;&gt;</span>
+
+<span class="o">&lt;&lt;</span><span class="n">ready</span><span class="o">&gt;&gt;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Please give it a go and come back. Here is a cat for moral support</p>
+
+<p><img src="https://images.pexels.com/photos/96938/pexels-photo-96938.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1260&amp;h=750&amp;dpr=1" alt="cat" /></p>
+
+<p>If you’d like to work through pure code the code example is <a href="https://github.com/0awful/literate-dodge-the-creeps-rust/blob/main/src/rust/src/mob.rs">here</a>, but you’ll probably learn more by trying and failing once first. I will also walk you through this file.</p>
+
+<h1 id="implementation">Implementation</h1>
+<p>Lets start with the simple. Did you remember the API macro?</p>
+
+<h6 id="api-macro">api macro</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[godot_api]</span>
+</code></pre></div></div>
+
+<p>Here’s the mob. Nothing special.</p>
+
+<h6 id="mob-struct">mob struct</h6>
+<div class="language-rs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[derive(GodotClass)]</span>
+<span class="nd">#[class(base=RigidBody2D)]</span>
+<span class="k">pub</span> <span class="k">struct</span> <span class="n">Mob</span> <span class="p">{</span>
+    <span class="k">pub</span> <span class="n">min_speed</span><span class="p">:</span> <span class="n">real</span><span class="p">,</span>
+    <span class="k">pub</span> <span class="n">max_speed</span><span class="p">:</span> <span class="n">real</span><span class="p">,</span>
+
+    <span class="nd">#[base]</span>
+    <span class="n">base</span><span class="p">:</span> <span class="n">Base</span><span class="o">&lt;</span><span class="n">RigidBody2D</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>We set min and max speed like in the <a href="https://docs.godotengine.org/en/stable/getting_started/first_2d_game/05.the_main_game_scene.html#spawning-mobs">GDScript Tutorial</a>. They do this in the main scene, but we have to define it will be something we set now.</p>
+
+<p>Next we move on to the init of the impl. Its not much different from the <code class="language-plaintext highlighter-rouge">player</code>.</p>
+
+<h6 id="init">init</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">fn</span> <span class="nf">init</span><span class="p">(</span><span class="n">base</span><span class="p">:</span> <span class="n">Base</span><span class="o">&lt;</span><span class="n">RigidBody2D</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="k">Self</span> <span class="p">{</span>
+        <span class="n">Mob</span> <span class="p">{</span>
+            <span class="n">min_speed</span><span class="p">:</span> <span class="mf">150.0</span><span class="p">,</span>
+            <span class="n">max_speed</span><span class="p">:</span> <span class="mf">250.0</span><span class="p">,</span>
+            <span class="n">base</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p>You’ve got some magic numbers you could pull out as consts if you’d like.</p>
+
+<h6 id="ready">ready</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">fn</span> <span class="nf">ready</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="k">mut</span> <span class="n">sprite</span> <span class="o">=</span> <span class="k">self</span>
+            <span class="py">.base</span>
+            <span class="py">.get_node_as</span><span class="p">::</span><span class="o">&lt;</span><span class="n">AnimatedSprite2D</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"AnimatedSprite2D"</span><span class="p">);</span>
+
+        <span class="k">let</span> <span class="n">anim_names</span> <span class="o">=</span> <span class="n">sprite</span><span class="nf">.get_sprite_frames</span><span class="p">()</span><span class="nf">.unwrap</span><span class="p">()</span><span class="nf">.get_animation_names</span><span class="p">();</span>
+        <span class="k">let</span> <span class="n">anim_names</span> <span class="o">=</span> <span class="n">anim_names</span><span class="nf">.to_vec</span><span class="p">();</span>
+        <span class="k">let</span> <span class="k">mut</span> <span class="n">rng</span> <span class="o">=</span> <span class="nn">rand</span><span class="p">::</span><span class="nf">thread_rng</span><span class="p">();</span>
+
+        <span class="k">let</span> <span class="n">animation_name</span> <span class="o">=</span> <span class="n">anim_names</span><span class="nf">.choose</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="n">rng</span><span class="p">)</span><span class="nf">.unwrap</span><span class="p">();</span>
+
+        <span class="n">sprite</span><span class="nf">.set_animation</span><span class="p">(</span><span class="n">animation_name</span><span class="nf">.into</span><span class="p">());</span>
+        <span class="n">sprite</span><span class="nf">.play</span><span class="p">();</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p>Here you use the mysterious ‘special import’ great work if you got it. Rust has a <a href="https://docs.rs/rand/latest/rand/"><code class="language-plaintext highlighter-rouge">rand</code> crate</a> everyone uses and the language doesn’t have any randoms. This means we have an update to the cargo.toml. I’ll share that later if you’re following along.</p>
+
+<h6 id="a-special-import">a special import</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">rand</span><span class="p">::</span><span class="nn">prelude</span><span class="p">::</span><span class="o">*</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>and for good measure here’s the normal imports</p>
+
+<h6 id="typical-imports">typical imports</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">godot</span><span class="p">::</span><span class="nn">engine</span><span class="p">::{</span><span class="n">AnimatedSprite2D</span><span class="p">,</span> <span class="n">IRigidBody2D</span><span class="p">,</span> <span class="n">RigidBody2D</span><span class="p">};</span>
+<span class="k">use</span> <span class="nn">godot</span><span class="p">::</span><span class="nn">prelude</span><span class="p">::</span><span class="o">*</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>And we have what I imagine would’ve been the hardest to guess, but the most intuitive. Here’s how you free the memory.</p>
+
+<h6 id="offscreen-cleanup">offscreen cleanup</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nd">#[func]</span>
+    <span class="k">fn</span> <span class="nf">on_visibility_screen_exited</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">self</span><span class="py">.base</span><span class="nf">.queue_free</span><span class="p">();</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p>You use base because you’re acting on the godot node and not your struct.</p>
+
+<h1 id="add-this-to-librs">Add this to lib.rs</h1>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">mod</span> <span class="n">mob</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Then you go through the standard process of adding this item to godot. Follow the <a href="https://docs.godotengine.org/en/stable/getting_started/first_2d_game/04.creating_the_enemy.html#">GDScript Tutorial for Mobs</a>. Nothing is different for this section.</p>
+
+<h1 id="cargotoml">Cargo.toml</h1>
+<p>If you’re looking for it. Here it is. But know you can also run <code class="language-plaintext highlighter-rouge">cargo add rand</code> here to get it. This works to add any dependency.</p>
+
+<h6 id="filecargotoml">file:../Cargo.toml</h6>
+<div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[package]</span>
+<span class="py">name</span> <span class="p">=</span> <span class="s">"dodge-the-creeps"</span>
+<span class="py">version</span> <span class="p">=</span> <span class="s">"0.1.0"</span>
+<span class="py">edition</span> <span class="p">=</span> <span class="s">"2021"</span>
+
+<span class="nn">[lib]</span>
+<span class="py">crate-type</span> <span class="p">=</span> <span class="nn">["cdylib"]</span>
+
+<span class="nn">[dependencies]</span>
+<span class="nn">godot</span> <span class="o">=</span> <span class="p">{</span> <span class="py">git</span> <span class="p">=</span> <span class="s">"https://github.com/godot-rust/gdext"</span><span class="p">,</span> <span class="py">branch</span> <span class="p">=</span> <span class="s">"master"</span> <span class="p">}</span>
+<span class="py">rand</span> <span class="p">=</span> <span class="s">"0.8.5"</span>
+</code></pre></div></div>
+
+<p><a href="https://0awful.github.io/literate-dodge-the-creeps-rust/using-player-in-the-editor">Previous Page</a>
+<a href="https://github.com/0awful/literate-dodge-the-creeps-rust/blob/main/src/rust/src/mob.rs">Full Mob Code</a>
+<a href="https://0awful.github.io/literate-dodge-the-creeps-rust/code-the-hud">Next Page</a></p>

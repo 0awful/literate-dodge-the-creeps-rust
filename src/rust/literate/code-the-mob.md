@@ -1,3 +1,5 @@
+---
+---
 # Coding the Mob
 
 It's time for you to give this another go. From what you know now you can be pretty successful in completing the mob rust code. I'll give you a high level overview to lead you in the right direction.

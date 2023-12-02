@@ -1,3 +1,5 @@
+---
+---
 # The Hud
 
 We take a brief divergence from the GDScript tutorial to [Set up the hud](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html#contents) before the Main Scene. We do this because we want to use this in the Main Scene. Its easier to have it made before you need to use it.

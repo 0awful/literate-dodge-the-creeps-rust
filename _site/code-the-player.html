@@ -1,0 +1,312 @@
+<h1 id="setting-up-the-project">Setting Up The Project</h1>
+<p>Follow the examples given in <a href="https://godot-rust.github.io/book/intro/index.html">The Godot Rust Book</a> to setup the initial conditions. We will be using the following directory format.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/godot
+-- Godot things here
+/rust
+-- Rust things here
+</code></pre></div></div>
+
+<p>This is indentical to the described format. Additionally set up the <code class="language-plaintext highlighter-rouge">.gdextension</code> as described by The Godot Rust Book. We have named ours <code class="language-plaintext highlighter-rouge">rust.gdextension</code> but the name (<code class="language-plaintext highlighter-rouge">{name}.gdextension</code>) can be anything. It is purely for your ability to understand what the file is for.</p>
+
+<p>Next you’ll need the assets. We use the same assets as <a href="https://docs.godotengine.org/en/stable/getting_started/first_2d_game/01.project_setup.html">The Godot Docs</a>. Download them and put them in the same directories the godot docs describe.</p>
+
+<p>Additionally follow their advice on setting “Viewport Height,” “Viewport Width” and “Aspect Ratio” then return here for the first differences.</p>
+
+<h1 id="the-player-scene">The Player Scene</h1>
+
+<p>In the godot example you create the nodes first and then create the scripts. I find it works better with gdext to work from the script first and then go to the node levels. Why I prefer this will become very clear shortly.</p>
+
+<p>Lets start with making a <code class="language-plaintext highlighter-rouge">player.rs</code> file at <code class="language-plaintext highlighter-rouge">/rust/src/player.rs</code> in the future you can assume all rust files will be in the <code class="language-plaintext highlighter-rouge">/src</code> directory but any directory format that is legal rust will work.</p>
+
+<h6 id="set-up-the-player-struct">set up the player struct</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[derive(GodotClass)]</span>
+<span class="nd">#[class(base=Area2D)]</span>
+<span class="k">pub</span> <span class="k">struct</span> <span class="n">Player</span> <span class="p">{</span>
+    <span class="n">speed</span><span class="p">:</span> <span class="n">real</span><span class="p">,</span>
+    <span class="n">screen_size</span><span class="p">:</span> <span class="n">Vector2</span><span class="p">,</span>
+
+    <span class="nd">#[base]</span>
+    <span class="n">base</span><span class="p">:</span> <span class="n">Base</span><span class="o">&lt;</span><span class="n">Area2D</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Here we have defined the player struct. This is the internal information that will be used on the <a href="https://docs.godotengine.org/en/stable/classes/class_node.html">node</a>. We use <a href="https://doc.rust-lang.org/book/ch19-06-macros.html">rust macros</a> to make the struct compatible with godot.</p>
+
+<p>Additionally we set the <code class="language-plaintext highlighter-rouge">base</code> and use the <code class="language-plaintext highlighter-rouge">#[base]</code> macro. This will give us a lot of power later and you’ll come to really enjoy this pattern. But it is opt in. You don’t need it, but you probably want it most of the time.</p>
+
+<p>Because the base node’s type is Area2D we set it here in the <code class="language-plaintext highlighter-rouge">#[class(base=&lt;T&gt;)]</code> macro. Which can be any node type. We also use <code class="language-plaintext highlighter-rouge">#[derive(GodotClass)]</code>, which was covered in the <a href="https://godot-rust.github.io/book/intro/hello-world.html">Hello World Tutorial</a>. This means you must also import it <code class="language-plaintext highlighter-rouge">use godot::engine::Area2D</code> will get it for you. You also need <code class="language-plaintext highlighter-rouge">use godot::prelude::*</code>. The full imports will be shown off later.</p>
+
+<h2 id="programming-the-scene">Programming the scene</h2>
+
+<p>We need to do a couple things for the player to do what we’d like. We need to set up animations, player movement, collisions, and spawning the character. Our character will be removed from the game when it hits a mob and respawned when we start the game. Lets start with the most easy to understand. The player movement.</p>
+
+<h6 id="player-process">player process</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">fn</span> <span class="nf">process</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">delta</span><span class="p">:</span> <span class="nb">f64</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="k">mut</span> <span class="n">velocity</span> <span class="o">=</span> <span class="nn">Vector2</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">);</span>
+
+        <span class="k">let</span> <span class="n">input</span> <span class="o">=</span> <span class="nn">Input</span><span class="p">::</span><span class="nf">singleton</span><span class="p">();</span>
+        <span class="k">if</span> <span class="n">input</span><span class="nf">.is_action_pressed</span><span class="p">(</span><span class="s">"move_right"</span><span class="nf">.into</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">velocity</span> <span class="o">+=</span> <span class="nn">Vector2</span><span class="p">::</span><span class="n">RIGHT</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">input</span><span class="nf">.is_action_pressed</span><span class="p">(</span><span class="s">"move_left"</span><span class="nf">.into</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">velocity</span> <span class="o">+=</span> <span class="nn">Vector2</span><span class="p">::</span><span class="n">LEFT</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">input</span><span class="nf">.is_action_pressed</span><span class="p">(</span><span class="s">"move_down"</span><span class="nf">.into</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">velocity</span> <span class="o">+=</span> <span class="nn">Vector2</span><span class="p">::</span><span class="n">DOWN</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">input</span><span class="nf">.is_action_pressed</span><span class="p">(</span><span class="s">"move_up"</span><span class="nf">.into</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">velocity</span> <span class="o">+=</span> <span class="nn">Vector2</span><span class="p">::</span><span class="n">UP</span><span class="p">;</span>
+        <span class="p">}</span>
+
+<span class="o">&lt;&lt;</span><span class="n">get</span> <span class="n">sprite</span> <span class="n">node</span><span class="o">&gt;&gt;</span>
+        <span class="k">if</span> <span class="n">velocity</span><span class="nf">.length</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="p">{</span>
+            <span class="n">velocity</span> <span class="o">=</span> <span class="n">velocity</span><span class="nf">.normalized</span><span class="p">()</span> <span class="o">*</span> <span class="k">self</span><span class="py">.speed</span><span class="p">;</span>
+
+<span class="o">&lt;&lt;</span><span class="n">animate</span> <span class="n">sprite</span> <span class="n">node</span><span class="o">&gt;&gt;</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+<span class="o">&lt;&lt;</span><span class="n">handle</span> <span class="n">stopping</span> <span class="n">the</span> <span class="n">animation</span><span class="o">&gt;&gt;</span>
+        <span class="p">}</span>
+
+<span class="o">&lt;&lt;</span><span class="k">move</span> <span class="n">the</span> <span class="n">player</span><span class="o">&gt;&gt;</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p>This means we also need to set up these actions within our godot editor. This is done identically to the godot example so reference the official dodge the creeps example for setting that up. The same will be true of animations and setting up the collision shape. But we need to do a little more before we can set that up.</p>
+
+<p>And lets return to moving the player</p>
+<h6 id="move-the-player">move the player</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>        <span class="k">let</span> <span class="n">change</span> <span class="o">=</span> <span class="n">velocity</span> <span class="o">*</span> <span class="nn">real</span><span class="p">::</span><span class="nf">from_f64</span><span class="p">(</span><span class="n">delta</span><span class="p">);</span>
+        <span class="k">let</span> <span class="n">position</span> <span class="o">=</span> <span class="k">self</span><span class="py">.base</span><span class="nf">.get_global_position</span><span class="p">()</span> <span class="o">+</span> <span class="n">change</span><span class="p">;</span>
+        <span class="k">let</span> <span class="n">position</span> <span class="o">=</span> <span class="nn">Vector2</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span>
+            <span class="n">position</span><span class="py">.x</span><span class="nf">.clamp</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="k">self</span><span class="py">.screen_size.x</span><span class="p">),</span>
+            <span class="n">position</span><span class="py">.y</span><span class="nf">.clamp</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="k">self</span><span class="py">.screen_size.y</span><span class="p">),</span>
+        <span class="p">);</span>
+        <span class="k">self</span><span class="py">.base</span><span class="nf">.set_global_position</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+</code></pre></div></div>
+<p>Here we have a couple things we can talk about.</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">self.base.{property}</code> vs <code class="language-plaintext highlighter-rouge">self.{property}</code></li>
+  <li>The <code class="language-plaintext highlighter-rouge">real</code> type.</li>
+</ol>
+
+<h2 id="selfbaseproperty-vs-selfproperty"><code class="language-plaintext highlighter-rouge">self.base.{property}</code> vs <code class="language-plaintext highlighter-rouge">self.{property}</code></h2>
+<p>As you may remember we opted to set the base value on the player struct. We didn’t have to do it, but we chose to. Here is where we first get the benefits from choosing to do this. <code class="language-plaintext highlighter-rouge">self.base</code> is a reference to the properties of the godot node. We use it to modify the position of that godot node. If you need to change something in the engine, you’ll often do that through <code class="language-plaintext highlighter-rouge">self.base</code>. Additionally we use <code class="language-plaintext highlighter-rouge">self.screen_size</code> in this case. This is a reference to the property on the <code class="language-plaintext highlighter-rouge">player</code> struct. Anything you add to the struct you can get from <code class="language-plaintext highlighter-rouge">self.{property}</code>. You’ll see how more shortly.</p>
+
+<h2 id="the-real-type">The <code class="language-plaintext highlighter-rouge">real</code> type</h2>
+<p>The <code class="language-plaintext highlighter-rouge">real</code> type is a godot floating point number. Is is f32 or f64? Yes. Here’s the <a href="https://godot-rust.github.io/docs/gdext/master/godot/prelude/type.real.html">official real docs</a>. You can choose to make it f64. But in general you ignore the underlying floating point type and convert your <code class="language-plaintext highlighter-rouge">float</code>s into <code class="language-plaintext highlighter-rouge">real</code>s. Here we do it by using <code class="language-plaintext highlighter-rouge">real::from_f64(delta)</code>. Where <code class="language-plaintext highlighter-rouge">delta</code> is the <code class="language-plaintext highlighter-rouge">process(delta)</code> value or the time between two frames. <code class="language-plaintext highlighter-rouge">delta</code> more complicated than that in reality, but you don’t need to know how or why at this time. If you’re curious check out <a href="https://kidscancode.org/godot_recipes/4.x/basics/understanding_delta/index.html">Understanding Delta at KidsCanCode</a> and <a href="https://www.youtube.com/watch?v=yGhfUcPjXuE">this video from Jonas Tyroller</a> for even more depth.</p>
+
+<h1 id="initializing-the-player-node">Initializing the player node</h1>
+<p>Okay so we can move the player with that code, but where does it go? If you did the required reading of the <a href="https://godot-rust.github.io/book/intro/hello-world.html">Rust Hello World Tutorial</a> you probably already know. But if you don’t that’s fine too.</p>
+
+<p>Our player.rs file has the following loose structure.</p>
+<h6 id="filesrcplayerrs">file:../src/player.rs</h6>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;&lt;player imports&gt;&gt;
+
+&lt;&lt;set up the player struct&gt;&gt;
+
+&lt;&lt;define the player impl&gt;&gt;
+
+&lt;&lt;define the IArea2D impl&gt;&gt;
+
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">move the player</code> code goes in <code class="language-plaintext highlighter-rouge">IArea2D</code> <code class="language-plaintext highlighter-rouge">impl</code> which handles the <code class="language-plaintext highlighter-rouge">init</code> <code class="language-plaintext highlighter-rouge">ready</code> and <code class="language-plaintext highlighter-rouge">process</code> functions.</p>
+
+<h6 id="define-the-iarea2d-impl">define the IArea2D impl</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[godot_api]</span>
+<span class="k">impl</span> <span class="n">IArea2D</span> <span class="k">for</span> <span class="n">Player</span> <span class="p">{</span>
+<span class="o">&lt;&lt;</span><span class="n">player</span> <span class="n">init</span><span class="o">&gt;&gt;</span>
+
+<span class="o">&lt;&lt;</span><span class="n">player</span> <span class="n">ready</span><span class="o">&gt;&gt;</span>
+
+<span class="o">&lt;&lt;</span><span class="n">player</span> <span class="n">process</span><span class="o">&gt;&gt;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>And here we have another macro <code class="language-plaintext highlighter-rouge">#[godot_api]</code>. This does magic behind the scenes. If you leave it off things won’t work correctly, but <code class="language-plaintext highlighter-rouge">cargo</code> will nicely let you know it is missing.</p>
+
+<p>We just wrote the <code class="language-plaintext highlighter-rouge">player process code</code> leaving a few placeholder’s we’ll fill out shortly. Lets wrap up the <code class="language-plaintext highlighter-rouge">IArea2D</code> <code class="language-plaintext highlighter-rouge">impl</code> first.</p>
+
+<h6 id="player-init">player init</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">fn</span> <span class="nf">init</span><span class="p">(</span><span class="n">base</span><span class="p">:</span> <span class="n">Base</span><span class="o">&lt;</span><span class="n">Area2D</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="k">Self</span> <span class="p">{</span>
+        <span class="n">Player</span> <span class="p">{</span>
+            <span class="n">speed</span><span class="p">:</span> <span class="mf">400.0</span><span class="p">,</span>
+            <span class="n">screen_size</span><span class="p">:</span> <span class="nn">Vector2</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+            <span class="n">base</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p>Because we use base in the <code class="language-plaintext highlighter-rouge">Player</code> <code class="language-plaintext highlighter-rouge">struct</code> we need to have base as a parameter in our <code class="language-plaintext highlighter-rouge">init</code>. This is then handled automagically by <code class="language-plaintext highlighter-rouge">gdext</code>.</p>
+
+<p>But also what the heck. <code class="language-plaintext highlighter-rouge">screen_size</code> isn’t <code class="language-plaintext highlighter-rouge">(0.0, 0.0)</code>. We handle this in <code class="language-plaintext highlighter-rouge">ready</code>. We do this because the godot gscript tutorial does this. The reason it does that is because of lifecycle methods. Here’s the docs on <a href="https://docs.godotengine.org/en/stable/tutorials/best_practices/godot_notifications.html#ready-vs-enter-tree-vs-notification-parented">ready</a> and <a href="https://docs.godotengine.org/en/stable/tutorials/best_practices/godot_notifications.html#init-vs-initialization-vs-export">init</a>. Given godot recommends you use ready. You should use ready for these sorts of things. You don’t need to understand the depths of this at this time. We will talk about it more later if you’re curious.</p>
+
+<h6 id="player-ready">player ready</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">fn</span> <span class="nf">ready</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="n">viewport</span> <span class="o">=</span> <span class="k">self</span><span class="py">.base</span><span class="nf">.get_viewport_rect</span><span class="p">();</span>
+        <span class="k">self</span><span class="py">.screen_size</span> <span class="o">=</span> <span class="n">viewport</span><span class="py">.size</span><span class="p">;</span>
+        <span class="k">self</span><span class="py">.base</span><span class="nf">.hide</span><span class="p">();</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p>Here we set the screen size and hide the player. We do this because we don’t want them visible when we are on the main menu.</p>
+
+<p>At this point we could place this node in the scene. It wouldn’t do what we want yet. But we could add the node. In order to add a node you need an <code class="language-plaintext highlighter-rouge">init</code> function. Otherwise the godot editor won’t expose it as a node you can add to your scene. We have now used <code class="language-plaintext highlighter-rouge">ready</code> <code class="language-plaintext highlighter-rouge">process</code> and <code class="language-plaintext highlighter-rouge">init</code>. These are the main godot lifecycle methods. You’ll be seeing a lot of them.</p>
+
+<p>If you did choose to add the node at this time you may discover some interesting behavior. If you <code class="language-plaintext highlighter-rouge">cargo build</code> and open the godot editor, then add the node as described by <a href="https://godot-rust.github.io/book/intro/hello-world.html">The hello world tutorial</a> you may find that later <code class="language-plaintext highlighter-rouge">cargo build</code>s automatically update your nodes within godot. This is because it is reading from your library when you start the game. This means if you change the library it may pick up the changes. But it doesn’t do this always and doesn’t do it for all kinds of changes. You can force it to pick up your changes by restarting the editor. We’ll talk more about this in the next section.</p>
+
+<h1 id="preparing-for-collisions-and-the-player-impl">Preparing for collisions and the player impl</h1>
+<p>We have some functions that we put in the <code class="language-plaintext highlighter-rouge">I{NodeName}</code> <code class="language-plaintext highlighter-rouge">impl</code> and others we put in the <code class="language-plaintext highlighter-rouge">Player</code> <code class="language-plaintext highlighter-rouge">impl</code>. This distinction is because we have some code that is attaching to existing engine functions and others that are purely our creations. If its ours it goes in the <code class="language-plaintext highlighter-rouge">Player</code> <code class="language-plaintext highlighter-rouge">impl</code>. This distinction will become easier to understand with time.</p>
+
+<h6 id="define-the-player-impl">define the player impl</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[godot_api]</span>
+<span class="k">impl</span> <span class="n">Player</span> <span class="p">{</span>
+<span class="o">&lt;&lt;</span><span class="n">hit</span> <span class="n">signal</span><span class="o">&gt;&gt;</span>
+
+<span class="o">&lt;&lt;</span><span class="n">player</span> <span class="n">collision</span> <span class="n">logic</span><span class="o">&gt;&gt;</span>
+
+<span class="o">&lt;&lt;</span><span class="n">player</span> <span class="n">start</span> <span class="n">logic</span><span class="o">&gt;&gt;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>We will have this rough structure.</p>
+
+<h6 id="player-collision-logic">player collision logic</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nd">#[func]</span>
+    <span class="k">fn</span> <span class="nf">on_player_body_entered</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">self</span><span class="py">.base</span><span class="nf">.hide</span><span class="p">();</span>
+        <span class="k">self</span><span class="py">.base</span><span class="nf">.emit_signal</span><span class="p">(</span><span class="s">"hit"</span><span class="nf">.into</span><span class="p">(),</span> <span class="o">&amp;</span><span class="p">[]);</span>
+
+        <span class="k">let</span> <span class="k">mut</span> <span class="n">collision_shape</span> <span class="o">=</span> <span class="k">self</span>
+            <span class="py">.base</span>
+            <span class="py">.get_node_as</span><span class="p">::</span><span class="o">&lt;</span><span class="n">CollisionShape2D</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"CollisionShape2D"</span><span class="p">);</span>
+
+        <span class="n">collision_shape</span><span class="nf">.set_deferred</span><span class="p">(</span><span class="s">"disabled"</span><span class="nf">.into</span><span class="p">(),</span> <span class="k">true</span><span class="nf">.to_variant</span><span class="p">());</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p>So when we are hit we hide our player, hide the collision body, and emit a signal. Nothing special right? Well if you do some digging into the <a href="https://docs.godotengine.org/en/stable/classes/class_area2d.html#methods">engine documentation</a> you’ll find that <code class="language-plaintext highlighter-rouge">body entered</code> (the signal we’ll attach to this) has an argument it provides.</p>
+
+<p><img src="https://github.com/0awful/literate-dodge-the-creeps-rust/tree/main/assets/body_entered.png" alt="body entered docs snippet" /></p>
+
+<p>This means we could take a value but are opting not to. This will come back in the near future.</p>
+
+<p><code class="language-plaintext highlighter-rouge">emit_signal</code> has two values. The first is the signal cast into an engine string. The second is the properties to put on that signal. We don’t want to set any so we place an empty value of <code class="language-plaintext highlighter-rouge">&amp;[]</code>. This is an empty <a href="https://docs.godotengine.org/en/stable/classes/class_variant.html">Variant Type</a>.</p>
+
+<p>We also use <code class="language-plaintext highlighter-rouge">true.to_variant()</code>. Its another Variant Type. This is a dynamic godot engine type. It can be many things. The engine uses it in several places. Here we cast to it like we typecast many other things. Nothing too special about it. Something to be aware of. You can learn more <a href="https://docs.godotengine.org/en/stable/classes/class_variant.html">here</a>.</p>
+
+<p>Now it is time to set up our signal.</p>
+<h6 id="hit-signal">hit signal</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nd">#[signal]</span>
+    <span class="k">fn</span> <span class="nf">hit</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>That’s it. Signals are very easy.</p>
+
+<p>Lets set up the start function. We need this because we will be respawning the player and therefore can’t rely on the <code class="language-plaintext highlighter-rouge">init</code> and <code class="language-plaintext highlighter-rouge">ready</code> functions to handle all of this logic.</p>
+
+<h6 id="player-start-logic">player start logic</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nd">#[func]</span>
+    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">start</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">Vector2</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">self</span><span class="py">.base</span><span class="nf">.set_global_position</span><span class="p">(</span><span class="n">pos</span><span class="p">);</span>
+        <span class="k">self</span><span class="py">.base</span><span class="nf">.show</span><span class="p">();</span>
+
+        <span class="k">let</span> <span class="k">mut</span> <span class="n">collision_shape</span> <span class="o">=</span> <span class="k">self</span>
+            <span class="py">.base</span>
+            <span class="py">.get_node_as</span><span class="p">::</span><span class="o">&lt;</span><span class="n">CollisionShape2D</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"CollisionShape2D"</span><span class="p">);</span>
+
+        <span class="n">collision_shape</span><span class="nf">.set_disabled</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+
+<p>We set the player’s position, show the player and enable collision. Standard.</p>
+
+<p>Now seems like a great time to talk about <code class="language-plaintext highlighter-rouge">get_node_as::&lt;T&gt;("STRING")</code></p>
+
+<p>This is how you access the children of your node. Our player node will have a few children. You’ve seen us get a <code class="language-plaintext highlighter-rouge">CollisionShape2D</code>, we will also have an <code class="language-plaintext highlighter-rouge">AnimatedSprite2D</code>. When we add our player to the scene we will have to manually add these children in the editor. This is why it is easier to do the rust code first. Because we cannot add the player node until we write this code, so we would have to make a temporary node. Give it children. Then move those children to our player and then make that player the root of the scene. We could absolutely do it that way. But I’m of the belief this is easier.</p>
+
+<p>The string is the name of the node. We can rename the node in the scene to anything. If you have multiple of the same type you will be forced to rename at least one of them. No two nodes can have the same name. You may find errors here. If you wrote <code class="language-plaintext highlighter-rouge">"CollisionShape2d"</code> instead of <code class="language-plaintext highlighter-rouge">"CollisionShape2D"</code> you’d have an error that may be difficult to diagnose. Be aware of this and check this when you debug.</p>
+
+<h1 id="animating-the-player">Animating the player</h1>
+
+<p>We’re inches away from having the rust code complete. We have to write the code for <code class="language-plaintext highlighter-rouge">get sprite node</code> <code class="language-plaintext highlighter-rouge">animate sprite node</code> and <code class="language-plaintext highlighter-rouge">stop the animation</code></p>
+
+<p>I invite you right now to try to implementing <code class="language-plaintext highlighter-rouge">get the sprite node</code>. You know all you need to do it. Once you’ve tried and even if you’ve failed, come back and move on.</p>
+
+<p>Here I’ll give you a little picture</p>
+
+<p><img src="https://images.pexels.com/photos/45201/kitty-cat-kitten-pet-45201.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1260&amp;h=750&amp;dpr=1" alt="cat" /></p>
+
+<h6 id="get-sprite-node">get sprite node</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>        <span class="k">let</span> <span class="k">mut</span> <span class="n">animated_sprite</span> <span class="o">=</span> <span class="k">self</span>
+            <span class="py">.base</span>
+            <span class="py">.get_node_as</span><span class="p">::</span><span class="o">&lt;</span><span class="n">AnimatedSprite2D</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"AnimatedSprite2D"</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>This pattern is going to be central to <code class="language-plaintext highlighter-rouge">gdext</code> development. You will write a line like this one in every project. It’ll probably be the first line you can write by memory. If you have autocomplete, code snippets, or the like, this would be a great candidate for something to set that up for.</p>
+
+<p>Now its time to animate. This is a little more difficult. Remember this is happening in the context of an <code class="language-plaintext highlighter-rouge">if</code> block in our <code class="language-plaintext highlighter-rouge">process</code> function.</p>
+
+<h6 id="animate-sprite-node">animate sprite node</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>            <span class="k">let</span> <span class="n">animation</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="n">velocity</span><span class="py">.x</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="p">{</span>
+                <span class="n">animation</span> <span class="o">=</span> <span class="s">"right"</span><span class="p">;</span>
+                <span class="n">animated_sprite</span><span class="nf">.set_flip_v</span><span class="p">(</span><span class="k">false</span><span class="p">);</span>
+                <span class="n">animated_sprite</span><span class="nf">.set_flip_h</span><span class="p">(</span><span class="n">velocity</span><span class="py">.x</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="n">animation</span> <span class="o">=</span> <span class="s">"up"</span><span class="p">;</span>
+                <span class="n">animated_sprite</span><span class="nf">.set_flip_v</span><span class="p">(</span><span class="n">velocity</span><span class="py">.y</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="p">}</span>
+
+            <span class="n">animated_sprite</span><span class="nf">.play_ex</span><span class="p">()</span><span class="nf">.name</span><span class="p">(</span><span class="n">animation</span><span class="nf">.into</span><span class="p">())</span><span class="nf">.done</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>Here we are stringly matching the name of animations we will set up in the editor. If they don’t match exactly you’ll have errors. We also handle flipping x/y</p>
+
+<p>What does play_ex mean? Well in this case we need to give it a little more information to get our desired behavior. We need to tell it which animation to play. We do that by calling the <code class="language-plaintext highlighter-rouge">_ex()</code> variant. That returns a <a href="https://godot-rust.github.io/docs/gdext/master/godot/engine/animated_sprite_2d/struct.ExPlay.html"><code class="language-plaintext highlighter-rouge">ExPlay</code></a>. On that <code class="language-plaintext highlighter-rouge">ExPlay</code> we call <code class="language-plaintext highlighter-rouge">.name()</code> with the name of the animation to play and then <code class="language-plaintext highlighter-rouge">.done()</code> to play it.</p>
+
+<p>If you didn’t need to specify extra information you could call <code class="language-plaintext highlighter-rouge">.play()</code>.</p>
+
+<p>This pattern is common, where a simple method is exposed like <code class="language-plaintext highlighter-rouge">.play()</code> or <code class="language-plaintext highlighter-rouge">.connect()</code> which runs via the godot default values. If you need to use different values you call the <code class="language-plaintext highlighter-rouge">_ex()</code> version of the function instead and chain the values you need to set. This is <a href="https://rust-unofficial.github.io/patterns/patterns/creational/builder.html"><code class="language-plaintext highlighter-rouge">Builder</code> semantics</a>.</p>
+
+<p>Once again you now know all you’d need to know to stop the animation. Take a stab at implementing it. It occurs in the else block of the <code class="language-plaintext highlighter-rouge">velocity.length() &gt; 0.0</code> <code class="language-plaintext highlighter-rouge">if</code> statement.</p>
+
+<p>Here’s another photo.</p>
+
+<p><img src="https://images.pexels.com/photos/416160/pexels-photo-416160.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=1260&amp;h=750&amp;dpr=1" alt="cat" /></p>
+
+<h6 id="handle-stopping-the-animation">handle stopping the animation</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>            <span class="n">animated_sprite</span><span class="nf">.stop</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>Its that easy.</p>
+
+<p>We don’t need to say anything special so we don’t need to use <code class="language-plaintext highlighter-rouge">.stop_ex()</code></p>
+
+<p>If you editor didn’t automatically perform the imports for you. Here are the imports.</p>
+<h6 id="player-imports">player imports</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">godot</span><span class="p">::</span><span class="nn">engine</span><span class="p">::{</span><span class="n">AnimatedSprite2D</span><span class="p">,</span> <span class="n">Area2D</span><span class="p">,</span> <span class="n">CollisionShape2D</span><span class="p">,</span> <span class="n">IArea2D</span><span class="p">};</span>
+<span class="k">use</span> <span class="nn">godot</span><span class="p">::</span><span class="nn">prelude</span><span class="p">::</span><span class="o">*</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>With this you have now implemented all the rust code for the player sprite. You can find the combined code at the <a href="https://github.com/0awful/literate-dodge-the-creeps-rust/blob/main/src/rust/src/player.rs">player node example code</a>. Lets now tackle setting it up in the editor.</p>
+
+<h1 id="the-final-step">The Final Step</h1>
+<p>The last step is an addition to your <code class="language-plaintext highlighter-rouge">lib.rs</code>. Using standard rust semantics you expose the module.</p>
+
+<h6 id="example-librs">Example Lib.rs</h6>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">godot</span><span class="p">::</span><span class="nn">prelude</span><span class="p">::</span><span class="o">*</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="n">MyExtension</span><span class="p">;</span>
+
+<span class="k">pub</span> <span class="k">mod</span> <span class="n">player</span><span class="p">;</span>
+
+<span class="nd">#[gdextension]</span>
+<span class="k">unsafe</span> <span class="k">impl</span> <span class="n">ExtensionLibrary</span> <span class="k">for</span> <span class="n">MyExtension</span> <span class="p">{}</span>
+</code></pre></div></div>
+
+<p>You will do this for all code you wish to use in godot.</p>
+
+<p><a href="https://github.com/0awful/literate-dodge-the-creeps-rust/blob/main/src/rust/src/player.rs">Full Player Code</a> <a href="https://0awful.github.io/literate-dodge-the-creeps-rust/using-player-in-the-editor">Next Page</a></p>

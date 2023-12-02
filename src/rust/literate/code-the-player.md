@@ -1,5 +1,7 @@
-# Setting Up The Project
+---
 
+---
+# Setting Up The Project
 Follow the examples given in [The Godot Rust Book](https://godot-rust.github.io/book/intro/index.html) to setup the initial conditions. We will be using the following directory format.
 
 ```
