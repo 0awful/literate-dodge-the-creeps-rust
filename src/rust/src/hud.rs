@@ -25,7 +25,7 @@ impl Hud {
     pub fn show_game_over(&mut self) {
         self.show_message_text("Game Over".into());
 
-        let mut timer = self.base.get_tree().unwrap().create_timer(1.0).unwrap();
+        let mut timer = self.base.get_tree().unwrap().create_timer(2.0).unwrap();
         timer.connect("timeout".into(), self.base.callable("_show_start_button"));
     }
 
@@ -35,7 +35,7 @@ impl Hud {
         message_label.set_text("Dodge The Creeps".into());
         message_label.show();
         let mut button = self.base.get_node_as::<Button>("StartButton");
-        button.show()
+        button.show();
     }
 
     #[func]
