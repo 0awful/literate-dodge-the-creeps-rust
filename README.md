@@ -26,12 +26,6 @@ We use CI processes to do the following:
 3. We build the rust code
 4. We deploy the code from the main branch to github pages.
 
-This has a wrinkle
-
-## Rustfmt will always be unhappy with the code
-
-This happens because our rust code will have whitespaces from the indentation of the code blocks. Rather than changing the formatting of some blocks into something that would look stranger we accept these whitespace errors. You should still read the formatting log to see what its mad about. If its not a whitespace error you should fix it. Eventually a port of the rustfmt action will be made which has better compatibility in that regard.
-
 # Contributing
 
 You are welcome to open PRs. The CI tools will do a lot of the stuff behind the scenes. You won't need to build locally. If you update the `.md` files it will just work. The build check will let you know if you've failed a build. Check rustfmt and make it as happy as you can, don't worry about whitespace errors. Then tag @0awful and I'll review it for you.
