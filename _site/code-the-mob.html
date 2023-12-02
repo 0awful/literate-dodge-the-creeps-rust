@@ -3,7 +3,7 @@
 <p>It’s time for you to give this another go. From what you know now you can be pretty successful in completing the mob rust code. I’ll give you a high level overview to lead you in the right direction.</p>
 
 <h6 id="filesrcmobrs">file:../src/mob.rs</h6>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;&lt;file imports&gt;&gt;
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;&lt;file imports&gt;&gt;
 
 &lt;&lt;mob struct&gt;&gt;
 
@@ -14,20 +14,20 @@
 </code></pre></div></div>
 
 <h6 id="file-imports">file imports</h6>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;&lt;typical imports&gt;&gt;
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;&lt;typical imports&gt;&gt;
 
 &lt;&lt;a special import&gt;&gt;
 </code></pre></div></div>
 
 <h6 id="mob-impl">mob impl</h6>
-<div class="language-rs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;&lt;</span><span class="n">api</span> <span class="n">macro</span><span class="o">&gt;&gt;</span>
+<div class="language-rs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;&lt;</span><span class="n">api</span> <span class="k">macro</span><span class="o">&gt;&gt;</span>
 <span class="k">impl</span> <span class="n">Mob</span> <span class="p">{</span>
 <span class="o">&lt;&lt;</span><span class="n">offscreen</span> <span class="n">cleanup</span><span class="o">&gt;&gt;</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
 <h6 id="mob-rigidbody2d-impl">mob RigidBody2D impl</h6>
-<div class="language-rs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;&lt;</span><span class="n">api</span> <span class="n">macro</span><span class="o">&gt;&gt;</span>
+<div class="language-rs highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;&lt;</span><span class="n">api</span> <span class="k">macro</span><span class="o">&gt;&gt;</span>
 <span class="k">impl</span> <span class="n">IRigidBody2D</span> <span class="k">for</span> <span class="n">Mob</span> <span class="p">{</span>
 <span class="o">&lt;&lt;</span><span class="n">init</span><span class="o">&gt;&gt;</span>
 
@@ -64,10 +64,10 @@
 
 <p>We set min and max speed like in the <a href="https://docs.godotengine.org/en/stable/getting_started/first_2d_game/05.the_main_game_scene.html#spawning-mobs">GDScript Tutorial</a>. They do this in the main scene, but we have to define it will be something we set now.</p>
 
-<p>Next we move on to the init of the impl. Its not much different from the <code class="highlighter-rouge">player</code>.</p>
+<p>Next we move on to the init of the impl. Its not much different from the <code class="language-plaintext highlighter-rouge">player</code>.</p>
 
 <h6 id="init">init</h6>
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">fn</span> <span class="nf">init</span><span class="p">(</span><span class="n">base</span><span class="p">:</span> <span class="n">Base</span><span class="o">&lt;</span><span class="n">RigidBody2D</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">fn</span> <span class="nf">init</span><span class="p">(</span><span class="n">base</span><span class="p">:</span> <span class="n">Base</span><span class="o">&lt;</span><span class="n">RigidBody2D</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="k">Self</span> <span class="p">{</span>
         <span class="n">Mob</span> <span class="p">{</span>
             <span class="n">min_speed</span><span class="p">:</span> <span class="mf">150.0</span><span class="p">,</span>
             <span class="n">max_speed</span><span class="p">:</span> <span class="mf">250.0</span><span class="p">,</span>
@@ -95,7 +95,7 @@
     <span class="p">}</span>
 </code></pre></div></div>
 
-<p>Here you use the mysterious ‘special import’ great work if you got it. Rust has a <a href="https://docs.rs/rand/latest/rand/"><code class="highlighter-rouge">rand</code> crate</a> everyone uses and the language doesn’t have any randoms. This means we have an update to the cargo.toml. I’ll share that later if you’re following along.</p>
+<p>Here you use the mysterious ‘special import’ great work if you got it. Rust has a <a href="https://docs.rs/rand/latest/rand/"><code class="language-plaintext highlighter-rouge">rand</code> crate</a> everyone uses and the language doesn’t have any randoms. This means we have an update to the cargo.toml. I’ll share that later if you’re following along.</p>
 
 <h6 id="a-special-import">a special import</h6>
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="nn">rand</span><span class="p">::</span><span class="nn">prelude</span><span class="p">::</span><span class="o">*</span><span class="p">;</span>
@@ -126,7 +126,7 @@
 <p>Then you go through the standard process of adding this item to godot. Follow the <a href="https://docs.godotengine.org/en/stable/getting_started/first_2d_game/04.creating_the_enemy.html#">GDScript Tutorial for Mobs</a>. Nothing is different for this section.</p>
 
 <h1 id="cargotoml">Cargo.toml</h1>
-<p>If you’re looking for it. Here it is. But know you can also run <code class="highlighter-rouge">cargo add rand</code> here to get it. This works to add any dependency.</p>
+<p>If you’re looking for it. Here it is. But know you can also run <code class="language-plaintext highlighter-rouge">cargo add rand</code> here to get it. This works to add any dependency.</p>
 
 <h6 id="filecargotoml">file:../Cargo.toml</h6>
 <div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[package]</span>
@@ -138,7 +138,7 @@
 <span class="py">crate-type</span> <span class="p">=</span> <span class="nn">["cdylib"]</span>
 
 <span class="nn">[dependencies]</span>
-<span class="py">godot</span> <span class="p">=</span> <span class="err">{</span> <span class="err">git</span> <span class="err">=</span> <span class="s">"https://github.com/godot-rust/gdext"</span><span class="p">,</span> <span class="err">branch</span> <span class="err">=</span> <span class="s">"master"</span> <span class="err">}</span>
+<span class="nn">godot</span> <span class="o">=</span> <span class="p">{</span> <span class="py">git</span> <span class="p">=</span> <span class="s">"https://github.com/godot-rust/gdext"</span><span class="p">,</span> <span class="py">branch</span> <span class="p">=</span> <span class="s">"master"</span> <span class="p">}</span>
 <span class="py">rand</span> <span class="p">=</span> <span class="s">"0.8.5"</span>
 </code></pre></div></div>
 

@@ -25,9 +25,9 @@
 <span class="k">use</span> <span class="nn">rand</span><span class="p">::</span><span class="nn">prelude</span><span class="p">::</span><span class="o">*</span><span class="p">;</span>
 <span class="k">use</span> <span class="nn">std</span><span class="p">::</span><span class="nn">f32</span><span class="p">::</span><span class="nn">consts</span><span class="p">::</span><span class="n">PI</span><span class="p">;</span>
 
-<span class="k">use</span> <span class="nn">crate</span><span class="p">::</span><span class="nn">hud</span><span class="p">::</span><span class="n">Hud</span><span class="p">;</span>
-<span class="k">use</span> <span class="nn">crate</span><span class="p">::</span><span class="nn">mob</span><span class="p">::</span><span class="n">Mob</span><span class="p">;</span>
-<span class="k">use</span> <span class="nn">crate</span><span class="p">::</span><span class="nn">player</span><span class="p">::</span><span class="n">Player</span><span class="p">;</span>
+<span class="k">use</span> <span class="k">crate</span><span class="p">::</span><span class="nn">hud</span><span class="p">::</span><span class="n">Hud</span><span class="p">;</span>
+<span class="k">use</span> <span class="k">crate</span><span class="p">::</span><span class="nn">mob</span><span class="p">::</span><span class="n">Mob</span><span class="p">;</span>
+<span class="k">use</span> <span class="k">crate</span><span class="p">::</span><span class="nn">player</span><span class="p">::</span><span class="n">Player</span><span class="p">;</span>
 </code></pre></div></div>
 <p>We have a couple new things. We pull in the other file’s structs so that we can use the types within.</p>
 
@@ -47,14 +47,14 @@
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>Everything outside of the <code class="highlighter-rouge">PackedScene</code> is typical. However we do have a <code class="highlighter-rouge">Gd&lt;T&gt;</code>. This is a very important type in gdext. So important in fact that it is on <a href="https://godot-rust.github.io/docs/gdext/master/godot/#type-categories">the first page</a> of the gdext docs. Please refer to the documentation <a href="https://godot-rust.github.io/docs/gdext/master/godot/obj/struct.Gd.html">here</a> to learn more</p>
+<p>Everything outside of the <code class="language-plaintext highlighter-rouge">PackedScene</code> is typical. However we do have a <code class="language-plaintext highlighter-rouge">Gd&lt;T&gt;</code>. This is a very important type in gdext. So important in fact that it is on <a href="https://godot-rust.github.io/docs/gdext/master/godot/#type-categories">the first page</a> of the gdext docs. Please refer to the documentation <a href="https://godot-rust.github.io/docs/gdext/master/godot/obj/struct.Gd.html">here</a> to learn more</p>
 
 <h2 id="inode">INode</h2>
-<p>This is the next easiest part of this code. It has one new function and it’s just like the <code class="highlighter-rouge">player</code> code in how we use it.</p>
+<p>This is the next easiest part of this code. It has one new function and it’s just like the <code class="language-plaintext highlighter-rouge">player</code> code in how we use it.</p>
 <h6 id="class-impl">class impl</h6>
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[godot_api]</span>
 <span class="k">impl</span> <span class="n">INode</span> <span class="k">for</span> <span class="n">MainScene</span> <span class="p">{</span>
-    <span class="k">fn</span> <span class="nf">init</span><span class="p">(</span><span class="n">base</span><span class="p">:</span> <span class="n">Base</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">init</span><span class="p">(</span><span class="n">base</span><span class="p">:</span> <span class="n">Base</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="k">Self</span> <span class="p">{</span>
         <span class="n">MainScene</span> <span class="p">{</span>
             <span class="n">base</span><span class="p">,</span>
             <span class="n">score</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
@@ -67,7 +67,7 @@
     <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div></div>
-<p>As you can see we instantiate the PackedScene as a new empty, like we did the with <code class="highlighter-rouge">Player.screen_size</code>. Then we assign a value to it with <code class="highlighter-rouge">load</code> in the <code class="highlighter-rouge">ready</code> call. This is once again because lifecycles. But you could also argue its because <a href="https://godot-rust.github.io/docs/gdext/master/godot/engine/fn.load.html"><code class="highlighter-rouge">load()</code> might fail</a>. In rust when you use the struct syntax that we chose in <code class="highlighter-rouge">init</code> it by convention should not be failable. If it’s failable you should use <code class="highlighter-rouge">builder</code> semantics and provide a <code class="highlighter-rouge">Result&lt;T, E&gt;</code> value instead. We would be violating that if <code class="highlighter-rouge">load</code> failed.</p>
+<p>As you can see we instantiate the PackedScene as a new empty, like we did the with <code class="language-plaintext highlighter-rouge">Player.screen_size</code>. Then we assign a value to it with <code class="language-plaintext highlighter-rouge">load</code> in the <code class="language-plaintext highlighter-rouge">ready</code> call. This is once again because lifecycles. But you could also argue its because <a href="https://godot-rust.github.io/docs/gdext/master/godot/engine/fn.load.html"><code class="language-plaintext highlighter-rouge">load()</code> might fail</a>. In rust when you use the struct syntax that we chose in <code class="language-plaintext highlighter-rouge">init</code> it by convention should not be failable. If it’s failable you should use <code class="language-plaintext highlighter-rouge">builder</code> semantics and provide a <code class="language-plaintext highlighter-rouge">Result&lt;T, E&gt;</code> value instead. We would be violating that if <code class="language-plaintext highlighter-rouge">load</code> failed.</p>
 
 <h1 id="the-main-event">The Main Event</h1>
 <p>This is where things start to go in direction’s you’ll find challenging. Lets start with the easy parts.</p>
@@ -109,10 +109,10 @@
         <span class="n">hud</span><span class="nf">.bind_mut</span><span class="p">()</span><span class="nf">.update_score</span><span class="p">(</span><span class="k">self</span><span class="py">.score</span><span class="p">);</span>
     <span class="p">}</span>
 </code></pre></div></div>
-<p>The gotcha here is <code class="highlighter-rouge">bind_mut</code>. Its because the hud is another rust component. To gain access we use bind. Because we are performing a modifying call we have to <code class="highlighter-rouge">bind_mut()</code></p>
+<p>The gotcha here is <code class="language-plaintext highlighter-rouge">bind_mut</code>. Its because the hud is another rust component. To gain access we use bind. Because we are performing a modifying call we have to <code class="language-plaintext highlighter-rouge">bind_mut()</code></p>
 
 <h1 id="new-game">New Game</h1>
-<p>This is a lot of things you chould be okay with doing. There’s the same <code class="highlighter-rouge">bind_mut()</code> gotcha. But once you’re past that its the same game</p>
+<p>This is a lot of things you chould be okay with doing. There’s the same <code class="language-plaintext highlighter-rouge">bind_mut()</code> gotcha. But once you’re past that its the same game</p>
 <h6 id="new-game-1">new game</h6>
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nd">#[func]</span>
     <span class="k">pub</span> <span class="k">fn</span> <span class="nf">new_game</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
@@ -135,9 +135,9 @@
     <span class="p">}</span>
 </code></pre></div></div>
 
-<p>We’ve got the music player calls, the hud calls, a show message call. But at the end of the day this is just <code class="highlighter-rouge">get_node_as</code> with a couple instances of <code class="highlighter-rouge">bind_mut()</code></p>
+<p>We’ve got the music player calls, the hud calls, a show message call. But at the end of the day this is just <code class="language-plaintext highlighter-rouge">get_node_as</code> with a couple instances of <code class="language-plaintext highlighter-rouge">bind_mut()</code></p>
 
-<p>Good job if you got this one. No worries if you didn’t. <code class="highlighter-rouge">bind_mut</code> is a curve ball.</p>
+<p>Good job if you got this one. No worries if you didn’t. <code class="language-plaintext highlighter-rouge">bind_mut</code> is a curve ball.</p>
 
 <h1 id="the-hard-timeout">The Hard Timeout</h1>
 <p>This is the hardest part. Of the entire application. Every line of code. This right here is the hardest. If you didn’t get it no worries. If you did congrats. I know I didn’t.</p>
@@ -178,14 +178,14 @@
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>        <span class="k">let</span> <span class="k">mut</span> <span class="n">mob_scene</span> <span class="o">=</span> <span class="k">self</span><span class="py">.mob_scene.instantiate_as</span><span class="p">::</span><span class="o">&lt;</span><span class="n">RigidBody2D</span><span class="o">&gt;</span><span class="p">();</span>
 </code></pre></div></div>
 
-<p>To even see this part of the problem you need to crack <code class="highlighter-rouge">instantiate_as</code>. You’ve never used it before. Its the only time we use it in this project. We use this because we are turning a scene into a node. <code class="highlighter-rouge">instantiate_as::&lt;T&gt;()</code> takes a <code class="highlighter-rouge">PackedScene</code> and returns a <code class="highlighter-rouge">Gd&lt;T&gt;</code> (I told you <code class="highlighter-rouge">Gd&lt;&gt;</code> was important). But this function is failable. This will panic and crash if it can’t become <code class="highlighter-rouge">T</code>. See the documentation <a href="https://godot-rust.github.io/docs/gdext/master/godot/prelude/trait.PackedSceneExt.html#method.instantiate_as">here</a>.</p>
+<p>To even see this part of the problem you need to crack <code class="language-plaintext highlighter-rouge">instantiate_as</code>. You’ve never used it before. Its the only time we use it in this project. We use this because we are turning a scene into a node. <code class="language-plaintext highlighter-rouge">instantiate_as::&lt;T&gt;()</code> takes a <code class="language-plaintext highlighter-rouge">PackedScene</code> and returns a <code class="language-plaintext highlighter-rouge">Gd&lt;T&gt;</code> (I told you <code class="language-plaintext highlighter-rouge">Gd&lt;&gt;</code> was important). But this function is failable. This will panic and crash if it can’t become <code class="language-plaintext highlighter-rouge">T</code>. See the documentation <a href="https://godot-rust.github.io/docs/gdext/master/godot/prelude/trait.PackedSceneExt.html#method.instantiate_as">here</a>.</p>
 
-<p>If you were productionizing this you might want to use <code class="highlighter-rouge">try_instantiate_as</code> which would then allow for you to either attempt to recover or gracefully exit with a helpful error message.</p>
+<p>If you were productionizing this you might want to use <code class="language-plaintext highlighter-rouge">try_instantiate_as</code> which would then allow for you to either attempt to recover or gracefully exit with a helpful error message.</p>
 
 <h6 id="set-rotation">set rotation</h6>
 <p>And then you have the hardest math problem in the project. If you aren’t up on your geometry, well, you aren’t going to solve it. I view myself as a mathy kind of person. I couldn’t do this. If you know you know. If you don’t that’s what tutorials are for. To be fair. You could’ve stolen this from the <a href="https://docs.godotengine.org/en/stable/getting_started/first_2d_game/05.the_main_game_scene.html#main-script">GDScript Tutorial</a> but you would’ve needed to crack a few other tough parts to even get here.</p>
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>        <span class="k">let</span> <span class="k">mut</span> <span class="n">direction</span> <span class="o">=</span> <span class="n">mob_spawn_location</span><span class="nf">.get_rotation</span><span class="p">()</span> <span class="o">+</span> <span class="n">PI</span> <span class="err">/</span> <span class="mf">2.0</span><span class="p">;</span>
-        <span class="n">direction</span> <span class="o">+=</span> <span class="n">rng</span><span class="nf">.gen_range</span><span class="p">(</span><span class="o">-</span><span class="n">PI</span> <span class="err">/</span> <span class="mf">4.0</span><span class="o">..</span><span class="n">PI</span> <span class="err">/</span> <span class="mf">4.0</span><span class="p">);</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>        <span class="k">let</span> <span class="k">mut</span> <span class="n">direction</span> <span class="o">=</span> <span class="n">mob_spawn_location</span><span class="nf">.get_rotation</span><span class="p">()</span> <span class="o">+</span> <span class="n">PI</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">;</span>
+        <span class="n">direction</span> <span class="o">+=</span> <span class="n">rng</span><span class="nf">.gen_range</span><span class="p">(</span><span class="o">-</span><span class="n">PI</span> <span class="o">/</span> <span class="mf">4.0</span><span class="o">..</span><span class="n">PI</span> <span class="o">/</span> <span class="mf">4.0</span><span class="p">);</span>
 
         <span class="n">mob_scene</span><span class="nf">.set_rotation</span><span class="p">(</span><span class="n">direction</span><span class="p">);</span>
 </code></pre></div></div>
@@ -195,9 +195,9 @@
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>        <span class="n">mob</span><span class="nf">.set_linear_velocity</span><span class="p">(</span><span class="nn">Vector2</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="n">range</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span><span class="nf">.rotated</span><span class="p">(</span><span class="nn">real</span><span class="p">::</span><span class="nf">from_f32</span><span class="p">(</span><span class="n">direction</span><span class="p">)));</span>
 </code></pre></div></div>
 
-<p>So you <code class="highlighter-rouge">set_linear_velocity()</code> with your brand new <code class="highlighter-rouge">Vector2</code> that you give a little rotation to. It’s not hard. I totally didn’t spend an hour trying to crack this. Nope. That didn’t happen.</p>
+<p>So you <code class="language-plaintext highlighter-rouge">set_linear_velocity()</code> with your brand new <code class="language-plaintext highlighter-rouge">Vector2</code> that you give a little rotation to. It’s not hard. I totally didn’t spend an hour trying to crack this. Nope. That didn’t happen.</p>
 
-<p>Also you use <code class="highlighter-rouge">real::from_f32</code> to support double precision if you want it.</p>
+<p>Also you use <code class="language-plaintext highlighter-rouge">real::from_f32</code> to support double precision if you want it.</p>
 
 <p>To cap it all off you have to add a child programatically. Which is the first and only time you do it in this project.</p>
 
@@ -211,11 +211,11 @@
         <span class="p">};</span>
 </code></pre></div></div>
 
-<p>Okay so the easy parts first. We call <code class="highlighter-rouge">self.base.add_child()</code>. It does what it says on the tin. There is a <code class="highlighter-rouge">.clone()</code> and <code class="highlighter-rouge">.upcast()</code> this is to play nice with rust’s borrowing and type semantics. If its going to leave your scope, you usually make a clone. You can do more things. <code class="highlighter-rouge">move</code> or the like. But <code class="highlighter-rouge">clone()</code> is fine. If you need even more performance then evaluate that. But for our case <code class="highlighter-rouge">move</code> isn’t possible because we still need that scene. We <code class="highlighter-rouge">.cast</code> that into <code class="highlighter-rouge">Mob</code> and get the <code class="highlighter-rouge">mut mob</code> variable.</p>
+<p>Okay so the easy parts first. We call <code class="language-plaintext highlighter-rouge">self.base.add_child()</code>. It does what it says on the tin. There is a <code class="language-plaintext highlighter-rouge">.clone()</code> and <code class="language-plaintext highlighter-rouge">.upcast()</code> this is to play nice with rust’s borrowing and type semantics. If its going to leave your scope, you usually make a clone. You can do more things. <code class="language-plaintext highlighter-rouge">move</code> or the like. But <code class="language-plaintext highlighter-rouge">clone()</code> is fine. If you need even more performance then evaluate that. But for our case <code class="language-plaintext highlighter-rouge">move</code> isn’t possible because we still need that scene. We <code class="language-plaintext highlighter-rouge">.cast</code> that into <code class="language-plaintext highlighter-rouge">Mob</code> and get the <code class="language-plaintext highlighter-rouge">mut mob</code> variable.</p>
 
-<p>This is the easy stuff. Here’s the headscratcher. You open a closure to make a local scope. We call <code class="highlighter-rouge">let mob = mob.bind()</code> so we’ve shadowed mob into its own thing. Then we generate a range with <code class="highlighter-rouge">.gen_range(...)</code>. Notice the absent semi colon. That means its return it assined to the <code class="highlighter-rouge">range</code> variable.</p>
+<p>This is the easy stuff. Here’s the headscratcher. You open a closure to make a local scope. We call <code class="language-plaintext highlighter-rouge">let mob = mob.bind()</code> so we’ve shadowed mob into its own thing. Then we generate a range with <code class="language-plaintext highlighter-rouge">.gen_range(...)</code>. Notice the absent semi colon. That means its return it assined to the <code class="language-plaintext highlighter-rouge">range</code> variable.</p>
 
-<p>So we’ve created a range with extra steps? You might ask. Yes, and we’re better for it. These extra steps are allowing a borrow to occur. When you <code class="highlighter-rouge">bind()</code> you are getting something like a <code class="highlighter-rouge">RefCell</code>. This means you’ve performed a <code class="highlighter-rouge">borrow</code>. Which will expire at the end of the scope. But we don’t need it past this moment so we do it in a local scope so we can return the <code class="highlighter-rouge">borrow</code> as fast as possible. If you are still fuzzy, that’s okay. This is a lot of knitty gritty rust. Here’s some links. <a href="https://godot-rust.github.io/docs/gdext/master/godot/obj/struct.Gd.html#method.bind">bind</a>, <a href="https://doc.rust-lang.org/rust-by-example/scope/borrow.html">borrowing</a>, 
+<p>So we’ve created a range with extra steps? You might ask. Yes, and we’re better for it. These extra steps are allowing a borrow to occur. When you <code class="language-plaintext highlighter-rouge">bind()</code> you are getting something like a <code class="language-plaintext highlighter-rouge">RefCell</code>. This means you’ve performed a <code class="language-plaintext highlighter-rouge">borrow</code>. Which will expire at the end of the scope. But we don’t need it past this moment so we do it in a local scope so we can return the <code class="language-plaintext highlighter-rouge">borrow</code> as fast as possible. If you are still fuzzy, that’s okay. This is a lot of knitty gritty rust. Here’s some links. <a href="https://godot-rust.github.io/docs/gdext/master/godot/obj/struct.Gd.html#method.bind">bind</a>, <a href="https://doc.rust-lang.org/rust-by-example/scope/borrow.html">borrowing</a>, 
 <a href="https://godot-rust.github.io/docs/gdext/master/godot/obj/struct.Gd.html#">Gd</a>
 <a href="https://fongyoong.github.io/easy_rust/Chapter_42.html">refcell in easy rust</a> and <a href="https://doc.rust-lang.org/book/ch15-05-interior-mutability.html">refcell in the rust book</a></p>
 
@@ -245,9 +245,9 @@
         <span class="n">death_sound</span><span class="nf">.play</span><span class="p">();</span>
     <span class="p">}</span>
 </code></pre></div></div>
-<p>You need to get the tree and then tell it to “queue_free”. This requires you to get the <code class="highlighter-rouge">base</code> <code class="highlighter-rouge">get_tree</code> on the base. That returns an optional so <code class="highlighter-rouge">unwrap()</code> then <code class="highlighter-rouge">call_group</code> to free it. The only hard part is the <code class="highlighter-rouge">variant</code>. If you remember from the <code class="highlighter-rouge">emit</code> part of this project you can make an empty variant with <code class="highlighter-rouge">&amp;[]</code>. We don’t need to say anything other than <code class="highlighter-rouge">queue_free</code>. So <code class="highlighter-rouge">&amp;[]</code> will get the job done.</p>
+<p>You need to get the tree and then tell it to “queue_free”. This requires you to get the <code class="language-plaintext highlighter-rouge">base</code> <code class="language-plaintext highlighter-rouge">get_tree</code> on the base. That returns an optional so <code class="language-plaintext highlighter-rouge">unwrap()</code> then <code class="language-plaintext highlighter-rouge">call_group</code> to free it. The only hard part is the <code class="language-plaintext highlighter-rouge">variant</code>. If you remember from the <code class="language-plaintext highlighter-rouge">emit</code> part of this project you can make an empty variant with <code class="language-plaintext highlighter-rouge">&amp;[]</code>. We don’t need to say anything other than <code class="language-plaintext highlighter-rouge">queue_free</code>. So <code class="language-plaintext highlighter-rouge">&amp;[]</code> will get the job done.</p>
 
-<p>You have a <code class="highlighter-rouge">bind_mut()</code> which you should be starting to get comfortable with. Everything else is just about what you expect.</p>
+<p>You have a <code class="language-plaintext highlighter-rouge">bind_mut()</code> which you should be starting to get comfortable with. Everything else is just about what you expect.</p>
 
 <h1 id="make-it-go">Make it go</h1>
 

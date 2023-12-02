@@ -2,10 +2,10 @@
 
 <p>We take a brief divergence from the GDScript tutorial to <a href="https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html#contents">Set up the hud</a> before the Main Scene. We do this because we want to use this in the Main Scene. Its easier to have it made before you need to use it.</p>
 
-<p>The hud is much of what you’ve already encountered however it has a greater emphasis on the <code class="highlighter-rouge">Hud</code> <code class="highlighter-rouge">impl</code>. Our hud will expose functions for our main scene to use. We do that by having public functions on our struct. That being said the shape of the file is very much the same. Give it a go. Here’s the <a href="https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html#contents">GDScript Ref</a></p>
+<p>The hud is much of what you’ve already encountered however it has a greater emphasis on the <code class="language-plaintext highlighter-rouge">Hud</code> <code class="language-plaintext highlighter-rouge">impl</code>. Our hud will expose functions for our main scene to use. We do that by having public functions on our struct. That being said the shape of the file is very much the same. Give it a go. Here’s the <a href="https://docs.godotengine.org/en/stable/getting_started/first_2d_game/index.html#contents">GDScript Ref</a></p>
 
 <h6 id="filesrchudrs">file:../src/hud.rs</h6>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;&lt;imports&gt;&gt;
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;&lt;imports&gt;&gt;
 
 &lt;&lt;struct&gt;&gt;
 
@@ -66,8 +66,8 @@
 </code></pre></div></div>
 
 <h6 id="init">init</h6>
-<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">fn</span> <span class="nf">init</span><span class="p">(</span><span class="n">base</span><span class="p">:</span> <span class="n">Base</span><span class="o">&lt;</span><span class="nn">Self</span><span class="p">::</span><span class="n">Base</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="n">Self</span> <span class="p">{</span>
-        <span class="n">Self</span> <span class="p">{</span> <span class="n">base</span> <span class="p">}</span>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">fn</span> <span class="nf">init</span><span class="p">(</span><span class="n">base</span><span class="p">:</span> <span class="n">Base</span><span class="o">&lt;</span><span class="k">Self</span><span class="p">::</span><span class="n">Base</span><span class="o">&gt;</span><span class="p">)</span> <span class="k">-&gt;</span> <span class="k">Self</span> <span class="p">{</span>
+        <span class="k">Self</span> <span class="p">{</span> <span class="n">base</span> <span class="p">}</span>
     <span class="p">}</span>
 </code></pre></div></div>
 
@@ -83,7 +83,7 @@
         <span class="n">message_label</span><span class="nf">.hide</span><span class="p">();</span>
     <span class="p">}</span>
 </code></pre></div></div>
-<p>Just a get node as. You did need to know that many nodes have a <code class="highlighter-rouge">.hide()</code> but this is largely the same as <a href="https://docs.godotengine.org/en/stable/getting_started/first_2d_game/06.heads_up_display.html">GDScript</a></p>
+<p>Just a get node as. You did need to know that many nodes have a <code class="language-plaintext highlighter-rouge">.hide()</code> but this is largely the same as <a href="https://docs.godotengine.org/en/stable/getting_started/first_2d_game/06.heads_up_display.html">GDScript</a></p>
 
 <h6 id="on-start-button-pressed">on start button pressed</h6>
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nd">#[func]</span>
@@ -98,7 +98,7 @@
 <p>This one has a gotcha later on. Here’s what the official example has to say:</p>
 
 <blockquote>
-  <p>Note: this works only because <code class="highlighter-rouge">start_game</code> is a deferred signal.
+  <p>Note: this works only because <code class="language-plaintext highlighter-rouge">start_game</code> is a deferred signal.
 This method keeps a &amp;mut Hud, and start_game calls Main::new_game(), which itself accesses this Hud
 instance through Gd<Hud>::bind_mut(). It will try creating a 2nd &amp;mut reference, and thus panic.
 Deferring the signal is one option to work around it.</Hud></p>
@@ -113,9 +113,9 @@ Deferring the signal is one option to work around it.</Hud></p>
         <span class="n">score_label</span><span class="nf">.set_text</span><span class="p">(</span><span class="n">score</span><span class="nf">.to_string</span><span class="p">()</span><span class="nf">.into</span><span class="p">());</span>
     <span class="p">}</span>
 </code></pre></div></div>
-<p>Type casting is the challenge here. A <code class="highlighter-rouge">to_string()</code> and an <code class="highlighter-rouge">into()</code>. Why’s that?</p>
+<p>Type casting is the challenge here. A <code class="language-plaintext highlighter-rouge">to_string()</code> and an <code class="language-plaintext highlighter-rouge">into()</code>. Why’s that?</p>
 
-<p>Score is a number, so we convert that to a string. Lots of ways to do it. Then we call <code class="highlighter-rouge">into()</code> because when we are putting things into nodes or the godot engine we need to make them <code class="highlighter-rouge">GStrings</code>. That way they work within the godot’s lifecycles and we can forget about managing them on our end.</p>
+<p>Score is a number, so we convert that to a string. Lots of ways to do it. Then we call <code class="language-plaintext highlighter-rouge">into()</code> because when we are putting things into nodes or the godot engine we need to make them <code class="language-plaintext highlighter-rouge">GStrings</code>. That way they work within the godot’s lifecycles and we can forget about managing them on our end.</p>
 
 <h6 id="show-message-text">show message text</h6>
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nd">#[func]</span>
@@ -127,7 +127,7 @@ Deferring the signal is one option to work around it.</Hud></p>
         <span class="n">message_timer</span><span class="nf">.start</span><span class="p">()</span>
     <span class="p">}</span>
 </code></pre></div></div>
-<p>A stress test of what you know so far. Get the two nodes. Set the text. Show text. Start a timer. Did you do yours as a <code class="highlighter-rouge">GString</code>? If you didn’t that’s fine, but know you may need to make a change elsewhere.</p>
+<p>A stress test of what you know so far. Get the two nodes. Set the text. Show text. Start a timer. Did you do yours as a <code class="language-plaintext highlighter-rouge">GString</code>? If you didn’t that’s fine, but know you may need to make a change elsewhere.</p>
 
 <h6 id="show-game-over">show game over</h6>
 <div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">pub</span> <span class="k">fn</span> <span class="nf">show_game_over</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
@@ -138,7 +138,7 @@ Deferring the signal is one option to work around it.</Hud></p>
     <span class="p">}</span>
 
     <span class="nd">#[func]</span>
-    <span class="k">fn</span> <span class="mi">_</span><span class="nf">show_start_button</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">fn</span> <span class="nf">_show_start_button</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span> <span class="k">self</span><span class="p">)</span> <span class="p">{</span>
         <span class="k">let</span> <span class="k">mut</span> <span class="n">message_label</span> <span class="o">=</span> <span class="k">self</span><span class="py">.base.get_node_as</span><span class="p">::</span><span class="o">&lt;</span><span class="n">Label</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"Message"</span><span class="p">);</span>
         <span class="n">message_label</span><span class="nf">.set_text</span><span class="p">(</span><span class="s">"Dodge The Creeps"</span><span class="nf">.into</span><span class="p">());</span>
         <span class="n">message_label</span><span class="nf">.show</span><span class="p">();</span>
@@ -146,15 +146,15 @@ Deferring the signal is one option to work around it.</Hud></p>
         <span class="n">button</span><span class="nf">.show</span><span class="p">();</span>
     <span class="p">}</span>
 </code></pre></div></div>
-<p>And the gotcha. We have a function that sets the label twice. Which means that if we rely on <code class="highlighter-rouge">show_message_text</code> we’ll have bad behavior. We’ll try to show one text and then immediately overwrite it with another. In the <a href="https://docs.godotengine.org/en/stable/getting_started/first_2d_game/06.heads_up_display.html#startbutton">GDScript Example</a> this is solved with two timers. They <code class="highlighter-rouge">await</code> one of them. Well here we can’t do that. You just can’t <code class="highlighter-rouge">await</code> a <code class="highlighter-rouge">Timer</code></p>
+<p>And the gotcha. We have a function that sets the label twice. Which means that if we rely on <code class="language-plaintext highlighter-rouge">show_message_text</code> we’ll have bad behavior. We’ll try to show one text and then immediately overwrite it with another. In the <a href="https://docs.godotengine.org/en/stable/getting_started/first_2d_game/06.heads_up_display.html#startbutton">GDScript Example</a> this is solved with two timers. They <code class="language-plaintext highlighter-rouge">await</code> one of them. Well here we can’t do that. You just can’t <code class="language-plaintext highlighter-rouge">await</code> a <code class="language-plaintext highlighter-rouge">Timer</code></p>
 
 <p>Its an <a href="https://github.com/godot-rust/gdext/issues/432">known issue</a> that has been marked “Not possible at the moment” and “Quite a pain to get working.” So we’re boned. Abandon all hope. We’ve failed.</p>
 
 <p>Of course not. In that same issue they call out a fix. Its the one you see above.</p>
 
-<p>Here’s a great time to mention you can connect signals in rust. This is how you do it. You have a node that emits a signal and a callable that you will connect to the signal. Here that node is the timer node. If the node already existed we could use <code class="highlighter-rouge">get_node_as</code> to get it, but because we don’t we’ll create one. We get the node tree and then add a node.</p>
+<p>Here’s a great time to mention you can connect signals in rust. This is how you do it. You have a node that emits a signal and a callable that you will connect to the signal. Here that node is the timer node. If the node already existed we could use <code class="language-plaintext highlighter-rouge">get_node_as</code> to get it, but because we don’t we’ll create one. We get the node tree and then add a node.</p>
 
-<p>With a reference to our brand new timer node we call <code class="highlighter-rouge">.connect</code>. The first param is the signal on the timer node we want to connect to. This is a string so be careful to match it correctly. Then you call <code class="highlighter-rouge">self.base.callable()</code> to make a callable function from one of the functions you have defined. It needs to have the <code class="highlighter-rouge">#[func]</code> macro to make it work this way. Then you enter the name of the function you want to call. We have prefixed the function name with an <code class="highlighter-rouge">_</code> to make <code class="highlighter-rouge">cargo</code> happy. It can’t tell that the function is being called so prefixing it with underscore lets it know not to worry about it.</p>
+<p>With a reference to our brand new timer node we call <code class="language-plaintext highlighter-rouge">.connect</code>. The first param is the signal on the timer node we want to connect to. This is a string so be careful to match it correctly. Then you call <code class="language-plaintext highlighter-rouge">self.base.callable()</code> to make a callable function from one of the functions you have defined. It needs to have the <code class="language-plaintext highlighter-rouge">#[func]</code> macro to make it work this way. Then you enter the name of the function you want to call. We have prefixed the function name with an <code class="language-plaintext highlighter-rouge">_</code> to make <code class="language-plaintext highlighter-rouge">cargo</code> happy. It can’t tell that the function is being called so prefixing it with underscore lets it know not to worry about it.</p>
 
 <p>The function body is what the <a href="https://docs.godotengine.org/en/stable/getting_started/first_2d_game/06.heads_up_display.html#">GDScript Example</a> does.</p>
 

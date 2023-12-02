@@ -7,11 +7,11 @@
 <div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cargo build
 </code></pre></div></div>
 
-<p>This will create your output directory in the standard rust directory of <code class="highlighter-rouge">target/</code>. Which your <code class="highlighter-rouge">.gdextension</code> in the <code class="highlighter-rouge">godot/</code> directory should point to. This is all covered in better detail in the <a href="https://godot-rust.github.io/book/intro/hello-world.html">hello world</a> tutorial.</p>
+<p>This will create your output directory in the standard rust directory of <code class="language-plaintext highlighter-rouge">target/</code>. Which your <code class="language-plaintext highlighter-rouge">.gdextension</code> in the <code class="language-plaintext highlighter-rouge">godot/</code> directory should point to. This is all covered in better detail in the <a href="https://godot-rust.github.io/book/intro/hello-world.html">hello world</a> tutorial.</p>
 
-<p>At this time you should open your godot editor if it isn’t already. If it is already open you may need to restart it. There is a handy shortcut <code class="highlighter-rouge">Project</code> &gt; <code class="highlighter-rouge">Reload Current Project</code></p>
+<p>At this time you should open your godot editor if it isn’t already. If it is already open you may need to restart it. There is a handy shortcut <code class="language-plaintext highlighter-rouge">Project</code> &gt; <code class="language-plaintext highlighter-rouge">Reload Current Project</code></p>
 
-<p>When things are set up correctly you’ll know because the <code class="highlighter-rouge">Player</code> node will now exist within the possible nodes you can create. Clicking <code class="highlighter-rouge">+</code>, <code class="highlighter-rouge">+ other node</code>, or the ‘add node hotkey’ will open the modal. Type player and if you find it you’ve got it working. If you don’t find it refer to the <a href="https://godot-rust.github.io/book/intro/hello-world.html">hello world tutorial</a></p>
+<p>When things are set up correctly you’ll know because the <code class="language-plaintext highlighter-rouge">Player</code> node will now exist within the possible nodes you can create. Clicking <code class="language-plaintext highlighter-rouge">+</code>, <code class="language-plaintext highlighter-rouge">+ other node</code>, or the ‘add node hotkey’ will open the modal. Type player and if you find it you’ve got it working. If you don’t find it refer to the <a href="https://godot-rust.github.io/book/intro/hello-world.html">hello world tutorial</a></p>
 
 <h1 id="adding-the-children">Adding the children</h1>
 
@@ -27,7 +27,7 @@
 
 <h1 id="the-hit-signal">The Hit Signal</h1>
 
-<p>The only notable difference between godot rust and gscript rust is adding signals. You can do this programmatically in rust, manually code it into the .tscn files. But the most reasonable solution is using the editor. Double clicking the <code class="highlighter-rouge">body_entered(body: Node2D)</code> event you will open the signal attacking modal.</p>
+<p>The only notable difference between godot rust and gscript rust is adding signals. You can do this programmatically in rust, manually code it into the .tscn files. But the most reasonable solution is using the editor. Double clicking the <code class="language-plaintext highlighter-rouge">body_entered(body: Node2D)</code> event you will open the signal attacking modal.</p>
 
 <p>Enable “Advanced”
 Click the “Player” node
@@ -43,7 +43,7 @@ Press “Pick”</p>
 
 <p>You should not need to disable that for any other signals in this tutorial.</p>
 
-<p>You can now select <code class="highlighter-rouge">player</code> -&gt;  <code class="highlighter-rouge">on_player_body_entered(_body: PhysicsBody2D)</code></p>
+<p>You can now select <code class="language-plaintext highlighter-rouge">player</code> -&gt;  <code class="language-plaintext highlighter-rouge">on_player_body_entered(_body: PhysicsBody2D)</code></p>
 
 <p>Double Click. Then select connect.</p>
 
