@@ -151,7 +151,7 @@ Good job if you got this one. No worries if you didn't. `bind_mut` is a curve ba
 This is the hardest part. Of the entire application. Every line of code. This right here is the hardest. If you didn't get it no worries. If you did congrats. I know I didn't.
 
 ###### mob timer timeout
-```
+```rust
     #[func]
     pub fn on_mob_timer_timeout(&mut self) {
 <<instantiate as>>
@@ -195,7 +195,7 @@ If you were productionizing this you might want to use `try_instantiate_as` whic
 
 ###### set rotation
 And then you have the hardest math problem in the project. If you aren't up on your geometry, well, you aren't going to solve it. I view myself as a mathy kind of person. I couldn't do this. If you know you know. If you don't that's what tutorials are for. To be fair. You could've stolen this from the [GDScript Tutorial](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/05.the_main_game_scene.html#main-script) but you would've needed to crack a few other tough parts to even get here.
-```
+```rust
         let mut direction = mob_spawn_location.get_rotation() + PI / 2.0;
         direction += rng.gen_range(-PI / 4.0..PI / 4.0);
 

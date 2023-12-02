@@ -122,7 +122,7 @@ use godot::prelude::*;
 And we have what I imagine would've been the hardest to guess, but the most intuitive. Here's how you free the memory.
 
 ###### offscreen cleanup
-```
+```rust
     #[func]
     fn on_visibility_screen_exited(&mut self) {
         self.base.queue_free();
@@ -132,7 +132,7 @@ And we have what I imagine would've been the hardest to guess, but the most intu
 You use base because you're acting on the godot node and not your struct.
 
 # Add this to lib.rs
-```
+```rust
 mod mob;
 ```
 
