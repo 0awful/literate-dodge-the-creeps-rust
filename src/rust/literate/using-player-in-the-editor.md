@@ -4,7 +4,7 @@ We've now coded up the player. Now to use it.
 
 First building. If you forgot to read the [hello world](https://godot-rust.github.io/book/intro/hello-world.html) tutorial or are unfamiliar with rust. We use [Cargo](https://doc.rust-lang.org/cargo/) in rust land. Execute the following in your rust directory.
 
-```
+```bash
 cargo build
 ```
 

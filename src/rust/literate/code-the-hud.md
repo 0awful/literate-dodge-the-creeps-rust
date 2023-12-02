@@ -84,7 +84,7 @@ All of these are the exact same patterns you've already seen.
 We have a lot of async in this file. We have functions that will get called when signals are emitted and we have things that emit signals. Through that we can dynamically do things. There's one gotcha.
 
 ###### on message timer timeout
-```
+```rust
     #[func]
     fn on_message_timer_timeout(&mut self) {
         let mut message_label = self.base.get_node_as::<Label>("Message");
@@ -139,7 +139,7 @@ Score is a number, so we convert that to a string. Lots of ways to do it. Then w
 A stress test of what you know so far. Get the two nodes. Set the text. Show text. Start a timer. Did you do yours as a `GString`? If you didn't that's fine, but know you may need to make a change elsewhere. 
 
 ###### show game over
-```
+```rust
     pub fn show_game_over(&mut self) {
         self.show_message_text("Game Over".into());
 
