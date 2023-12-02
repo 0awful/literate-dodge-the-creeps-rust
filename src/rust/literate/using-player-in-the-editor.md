@@ -1,3 +1,5 @@
+---
+---
 # Using your player
 
 We've now coded up the player. Now to use it.

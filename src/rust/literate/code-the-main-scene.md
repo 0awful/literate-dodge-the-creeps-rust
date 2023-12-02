@@ -1,3 +1,6 @@
+---
+---
+
 # Main
 
 This is where it all comes together. Up until now your experience has largely been that of using the editor and writing code. Now we get to play the game. You'll likely catch something you've forgotten here.
