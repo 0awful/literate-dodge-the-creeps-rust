@@ -1,2 +1,1 @@
-source: ./src/rust/literate
-theme: jekyll-theme-midnight
+theme: jekyll-theme-minimal
