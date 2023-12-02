@@ -143,7 +143,7 @@ A stress test of what you know so far. Get the two nodes. Set the text. Show tex
     pub fn show_game_over(&mut self) {
         self.show_message_text("Game Over".into());
 
-        let mut timer = self.base.get_tree().unwrap().create_timer(1.0).unwrap();
+        let mut timer = self.base.get_tree().unwrap().create_timer(2.0).unwrap();
         timer.connect("timeout".into(), self.base.callable("_show_start_button"));
     }
 
@@ -153,7 +153,7 @@ A stress test of what you know so far. Get the two nodes. Set the text. Show tex
         message_label.set_text("Dodge The Creeps".into());
         message_label.show();
         let mut button = self.base.get_node_as::<Button>("StartButton");
-        button.show()
+        button.show();
     }
 ```
 And the gotcha. We have a function that sets the label twice. Which means that if we rely on `show_message_text` we'll have bad behavior. We'll try to show one text and then immediately overwrite it with another. In the [GDScript Example](https://docs.godotengine.org/en/stable/getting_started/first_2d_game/06.heads_up_display.html#startbutton) this is solved with two timers. They `await` one of them. Well here we can't do that. You just can't `await` a `Timer`
