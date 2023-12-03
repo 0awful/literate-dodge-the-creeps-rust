@@ -29,3 +29,9 @@ We use CI processes to do the following:
 # Contributing
 
 You are welcome to open PRs. The CI tools will do a lot of the stuff behind the scenes. You won't need to build locally. If you update the `.md` files it will just work. The build check will let you know if you've failed a build. Check rustfmt and make it as happy as you can, don't worry about whitespace errors. Then tag @0awful and I'll review it for you.
+
+# Attribution
+
+This project would not be possible without the help of the friendly people in the gdext discord. Particularly the participants in the 'help-gdext' channel.
+
+It also cannot be stated enough how much this depends on the existing work done in the gdext repository. This is my annotations of existing source code in the gdext example. Which I worked to understand and explain as best I can.
